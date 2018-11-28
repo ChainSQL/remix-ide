@@ -498,7 +498,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
 
   // rerun the compiler when the environement changed
-  executionContext.event.register('web3EndpointChanged', this, function (context) {
+  executionContext.event.register('chainsqlWSChanged', this, function (context) {
     self.runCompiler()
   })
 
@@ -513,11 +513,11 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       let endPointUrl = queryParams.get().endPointUrl
       executionContext.setContext(context, endPointUrl,
       () => {
-        modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
+        modalDialogCustom.confirm(null, 'Are you sure you want to connect to an chainsql node?', () => {
           if (!endPointUrl) {
-            endPointUrl = 'http://localhost:8545'
+            endPointUrl = 'ws://localhost:5215'
           }
-          modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', endPointUrl, (target) => {
+          modalDialogCustom.prompt(null, 'ChainSQL Websocket Address', endPointUrl, (target) => {
             executionContext.setProviderFromEndpoint(target, context)
           }, () => {})
         }, () => {})

@@ -530,17 +530,13 @@ function settings (container, self) {
             title="Execution environment does not connect to any node, everything is local and in memory only."
             value="vm" checked name="executionContext"> JavaScript VM
           </option>
-          <option id="injected-mode"
-            title="Execution environment has been provided by Metamask or similar provider."
-            value="injected" checked name="executionContext"> Injected Web3
-          </option>
-          <option id="web3-mode"
-            title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!
+          <option id="chainsql-mode"
+            title="Execution environment connects to node at localhost, transactions will be sent to the network and can cause loss of money or worse!
             If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
-            value="web3" name="executionContext"> Web3 Provider
+            value="chainsql" name="executionContext"> ChainSQL Node
           </option>
         </select>
-        <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.icon} fa fa-info"></i></a>
+        <a href="http://chainsql.net" target="_blank"><i class="${css.icon} fa fa-info"></i></a>
       </div>
     </div>
   `
@@ -613,8 +609,8 @@ function settings (container, self) {
   selectExEnv.addEventListener('change', function (event) {
     let context = selectExEnv.options[selectExEnv.selectedIndex].value
     executionContext.executionContextChange(context, null, () => {
-      modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
-        modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
+      modalDialogCustom.confirm(null, 'Are you sure you want to connect to a chainsql node?', () => {
+        modalDialogCustom.prompt(null, 'ChainSQL Websocket Address', 'ws://localhost:5215', (target) => {
           executionContext.setProviderFromEndpoint(target, context, (alertMsg) => {
             if (alertMsg) {
               modalDialogCustom.alert(alertMsg)
