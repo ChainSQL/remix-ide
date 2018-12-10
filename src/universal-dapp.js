@@ -133,11 +133,13 @@ UniversalDApp.prototype.getAccounts = function (cb) {
   if (!executionContext.isVM()) {
     // Weirdness of web3: listAccounts() is sync, `getListAccounts()` is async
     // See: https://github.com/ethereum/web3.js/issues/442
-    if (this._deps.config.get('settings/personal-mode')) {
-      executionContext.web3().personal.getListAccounts(cb)
-    } else {
-      executionContext.web3().eth.getAccounts(cb)
-    }
+    // if (this._deps.config.get('settings/personal-mode')) {
+    //   executionContext.web3().personal.getListAccounts(cb)
+    // } else {
+    //   executionContext.web3().eth.getAccounts(cb)
+    // }
+    //don't need to getAccount
+    cb(null, new Array([]))
   } else {
     if (!self.accounts) {
       return cb('No accounts?')
@@ -205,6 +207,8 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
     }
   }
   // contractsDetails is used to resolve libraries
+  console.log(args.contractAbi)
+  console.log(value)
   txFormat.buildData(args.contractName, args.contractAbi, self.data.contractsDetails, false, args.funABI, value, (error, data) => {
     if (!error) {
       if (isUserAction) {
@@ -215,6 +219,8 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
         }
       }
       self.callFunction(args.address, data, args.funABI, (error, txResult) => {
+        console.log(error)
+        console.log(txResult)
         if (!error) {
           var isVM = executionContext.isVM()
           if (isVM) {
@@ -225,7 +231,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
             }
           }
           if (lookupOnly) {
-            var decoded = uiUtil.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : ethJSUtil.toBuffer(txResult.result), args.funABI)
+            var decoded = uiUtil.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : new Array(txResult), args.funABI)
             outputCb(decoded)
           }
         } else {
@@ -250,7 +256,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
   * @param {Function} callback    - callback.
   */
 UniversalDApp.prototype.createContract = function (data, callback) {
-  this.runTx({data: data, useCall: false}, (error, txResult) => {
+  this.runTx({data: data, useCall: false, isDeploy: true}, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     callback(error, txResult)
   })
@@ -265,7 +271,11 @@ UniversalDApp.prototype.createContract = function (data, callback) {
   * @param {Function} callback    - callback.
   */
 UniversalDApp.prototype.callFunction = function (to, data, funAbi, callback) {
-  this.runTx({to: to, data: data, useCall: funAbi.constant}, (error, txResult) => {
+  //console.log(funAbi)
+  //console.log(data)
+  //let funAbiName = funAbi.name + "(" + data.params + ")";
+  data.funAbi = funAbi
+  this.runTx({to: to, data: data, useCall: funAbi.constant, isDeploy: false}, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     callback(error, txResult)
   })
@@ -324,31 +334,44 @@ UniversalDApp.prototype.runTx = function (args, cb) {
         return next(null, 0, gasLimit)
       }
       self.transactionContextAPI.getValue(function (err, value) {
+        console.log(err)
         next(err, value, gasLimit)
       })
     },
     function getAccount (value, gasLimit, next) {
-      if (args.from) {
-        return next(null, args.from, value, gasLimit)
-      }
-      if (self.transactionContextAPI.getAddress) {
-        return self.transactionContextAPI.getAddress(function (err, address) {
-          next(err, address, value, gasLimit)
-        })
-      }
-      self.getAccounts(function (err, accounts) {
-        let address = accounts[0]
-
-        if (err) return next(err)
-        if (!address) return next('No accounts available')
-        if (executionContext.isVM() && !self.accounts[address]) {
-          return next('Invalid account selected')
+      if (executionContext.getProvider() === 'chainsql') {
+        const RootUser = {
+          secret: 'xnoPBzXtMeMyMHUVTgbuqAfg1SUTb',
+          address: 'zHb9CJAWyB4zj91VRWn96DkukG4bwdtyTh'
         }
-        next(null, address, value, gasLimit)
-      })
+        executionContext.chainsql().as(RootUser)
+
+        next(null, RootUser.address, value, gasLimit)
+      }
+      // if (args.from) {
+      //   return next(null, args.from, value, gasLimit)
+      // }
+      // if (self.transactionContextAPI.getAddress) {
+      //   return self.transactionContextAPI.getAddress(function (err, address) {
+      //     next(err, address, value, gasLimit)
+      //   })
+      // }
+      // self.getAccounts(function (err, accounts) {
+      //   let address = accounts[0]
+
+      //   if (err) return next(err)
+      //   if (!address) return next('No accounts available')
+      //   if (executionContext.isVM() && !self.accounts[address]) {
+      //     return next('Invalid account selected')
+      //   }
+      //   next(null, address, value, gasLimit)
+      // })
     },
     function runTransaction (fromAddress, value, gasLimit, next) {
-      var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, from: fromAddress, value: value, gasLimit: gasLimit }
+      let funAbi = {}
+      funAbi.funAbiName = args.data.funAbi.name
+      funAbi.funAbiParams = args.data.params
+      var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, isDeploy: args.isDeploy, contractName: args.data.contractName, funAbi: funAbi, from: fromAddress, value: value, gasLimit: gasLimit }
       var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName }
       var timestamp = Date.now()
 

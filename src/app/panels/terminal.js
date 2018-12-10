@@ -375,6 +375,7 @@ class Terminal {
                     <li>Checking transactions details and start debugging.</li>
                     <li>Running JavaScript scripts. The following libraries are accessible:
                       <ul class=${css2.ul}>
+                        <li><a target="_blank" href="http://chainsql.net/">ChainSQL</a></li>
                         <li><a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">web3 version 1.0.0</a></li>
                         <li><a target="_blank" href="https://docs.ethers.io/ethers.js/html/">ethers.js</a> </li>
                         <li><a target="_blank" href="https://www.npmjs.com/package/swarmgw">swarmgw</a> </li>

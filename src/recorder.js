@@ -65,12 +65,13 @@ class Recorder {
     })
 
     udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
+      console.log(txResult)
       if (error) return console.log(error)
       if (call) return
 
-      var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.result.contractAddress
+      var address = executionContext.isVM() ? txResult.result.createdAddress : txResult.contractAddress
       if (!address) return // not a contract creation
-      address = addressToString(address)
+      //address = addressToString(address)
       // save back created addresses for the convertion from tokens to real adresses
       this.data._createdContracts[address] = timestamp
       this.data._createdContractsReverse[timestamp] = address

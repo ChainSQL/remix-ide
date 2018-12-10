@@ -213,7 +213,7 @@ function debug (e, data, self) {
 }
 
 function log (self, tx, receipt) {
-  var resolvedTransaction = self._deps.txListener.resolvedTransaction(tx.hash)
+  var resolvedTransaction = self._deps.txListener.resolvedTransaction(tx.id)
   if (resolvedTransaction) {
     var compiledContracts = null
     if (self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
@@ -231,12 +231,12 @@ function log (self, tx, receipt) {
 }
 
 function renderKnownTransaction (self, data) {
-  var from = data.tx.from
+  var from = data.tx.specification.Account
   var to = data.resolvedData.contractName + '.' + data.resolvedData.fn
   var obj = {from, to}
   var txType = 'knownTx'
   var tx = yo`
-    <span id="tx${data.tx.hash}">
+    <span id="tx${data.tx.id}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.receipt, txType)}
         ${context(self, {from, to, data})}
@@ -389,7 +389,7 @@ function txDetails (e, tx, data, obj) {
     log.removeChild(arrow)
     log.appendChild(arrowUp)
     table = createTable({
-      hash: data.tx.hash,
+      hash: data.tx.id,
       status: data.receipt ? data.receipt.status : null,
       isCall: data.tx.isCall,
       contractAddress: data.tx.contractAddress,

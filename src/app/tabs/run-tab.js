@@ -158,14 +158,23 @@ function fillAccountsList (container, self) {
       if (accountListCallId > callid) return
       accountListCallId++
       if (err) { addTooltip(`Cannot get account list: ${err}`) }
+      if (executionContext.getProvider() === 'chainsql') {
+        $('#txorigin').empty()
+        console.log('empty the select')
+        return
+      }
       for (var loadedaddress in loadedAccounts) {
+        console.log(loadedaddress)
         if (accounts.indexOf(loadedaddress) === -1) {
+          console.log('need rmove')
           txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
           delete loadedAccounts[loadedaddress]
         }
       }
+      console.log('begin to add addr')
       for (var i in accounts) {
         var address = accounts[i]
+        console.log(address)
         if (!loadedAccounts[address]) {
           txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
           loadedAccounts[address] = 1
@@ -375,7 +384,12 @@ function contractDropdown (events, self) {
   function createInstanceCallback (error, selectedContract, data) {
     if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
     self._deps.logCallback(`creation of ${selectedContract.name} pending...`)
+    // self._deps.logCallback(`${JSON.stringify(selectedContract)}`)
+    // self._deps.logCallback(`=========================`)
+    // self._deps.logCallback(`${JSON.stringify(data)}`)
+    executionContext.initContractObj(selectedContract.name, selectedContract.contract.object.abi)
     self._deps.udapp.createContract(data, (error, txResult) => {
+      console.log(txResult)
       if (!error) {
         var isVM = executionContext.isVM()
         if (isVM) {
@@ -385,13 +399,14 @@ function contractDropdown (events, self) {
             return
           }
         }
-        if (txResult.result.status && txResult.result.status === '0x0') {
+        //if (txResult.result.status && txResult.result.status === '0x0') {
+        if (txResult.status && txResult.status !== 'validate_success') {
           self._deps.logCallback(`creation of ${selectedContract.name} errored: transaction execution failed`)
           return
         }
         var noInstancesText = self._view.noInstancesText
         if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
-        var address = isVM ? txResult.result.createdAddress : txResult.result.contractAddress
+        var address = isVM ? txResult.result.createdAddress : txResult.contractAddress
         instanceContainer.appendChild(self._deps.udappUI.renderInstance(selectedContract.contract.object, address, selectContractNames.value))
       } else {
         self._deps.logCallback(`creation of ${selectedContract.name} errored: ${error}`)
@@ -413,6 +428,7 @@ function contractDropdown (events, self) {
       self._deps.filePanel.compilerMetadata().metadataOf(selectedContract.name, (error, contractMetadata) => {
         if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
         if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
+          console.log('autoDeployLib')
           txFormat.buildData(selectedContract.name, selectedContract.contract.object, self._deps.compiler.getContracts(), true, constructor, args, (error, data) => {
             createInstanceCallback(error, selectedContract, data)
           }, (msg) => {
@@ -422,6 +438,7 @@ function contractDropdown (events, self) {
             self._deps.udapp.runTx(data, runTxCallback)
           })
         } else {
+          console.log('no-autoDeployLib')
           if (Object.keys(selectedContract.contract.object.evm.bytecode.linkReferences).length) self._deps.logCallback(`linking ${JSON.stringify(selectedContract.contract.object.evm.bytecode.linkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
           txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.contract.object, args, constructor, contractMetadata.linkReferences, selectedContract.contract.object.evm.bytecode.linkReferences, (error, data) => {
             if (data) data.contractName = selectedContract.name
@@ -540,6 +557,11 @@ function settings (container, self) {
       </div>
     </div>
   `
+  // <option id="injected-mode"
+  //           title="Execution environment has been provided by Metamask or similar provider."
+  //           value="injected" checked name="executionContext"> Injected Web3
+  //         </option>
+  // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
   var accountEl = yo`
     <div class="${css.crow}">
       <div class="${css.col1_1}">
@@ -607,7 +629,9 @@ function settings (container, self) {
   })
 
   selectExEnv.addEventListener('change', function (event) {
+    console.log('environment changed llc')
     let context = selectExEnv.options[selectExEnv.selectedIndex].value
+    console.log('context:' + context)
     executionContext.executionContextChange(context, null, () => {
       modalDialogCustom.confirm(null, 'Are you sure you want to connect to a chainsql node?', () => {
         modalDialogCustom.prompt(null, 'ChainSQL Websocket Address', 'ws://localhost:5215', (target) => {

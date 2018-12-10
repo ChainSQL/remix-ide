@@ -56,7 +56,8 @@ function Debugger (container, sourceHighlighter, localRegistry) {
   })
 
   executionContext.event.register('contextChanged', this, function (context) {
-    self.switchProvider(context)
+    //self.switchProvider(context)
+    console.log('comment temporary --LC')
   })
 
   this.debugger.event.register('newTraceLoaded', this, function () {
