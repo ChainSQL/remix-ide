@@ -148,6 +148,7 @@ class TxLogger {
 
     this.logKnownTX = this._deps.editorPanel.registerCommand('knownTransaction', (args, cmds, append) => {
       var data = args[0]
+      console.log("[logKnowTX]:", data)
       var el
       if (data.tx.isCall) {
         el = renderCall(this, data)
@@ -238,7 +239,7 @@ function renderKnownTransaction (self, data) {
   var tx = yo`
     <span id="tx${data.tx.id}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
-        ${checkTxStatus(data.receipt, txType)}
+        ${checkTxStatus(data.tx, txType)}
         ${context(self, {from, to, data})}
         <div class=${css.buttons}>
           <div class=${css.debug} onclick=${(e) => debug(e, data, self)}>Debug</div>
@@ -257,7 +258,7 @@ function renderCall (self, data) {
   var obj = {from, to}
   var txType = 'call'
   var tx = yo`
-    <span id="tx${data.tx.hash}">
+    <span id="tx${data.tx.id}">
       <div class="${css.log}" onclick=${e => txDetails(e, tx, data, obj)}>
         ${checkTxStatus(data.tx, txType)}
         <span class=${css.txLog}>
@@ -304,12 +305,12 @@ function renderEmptyBlock (self, data) {
 }
 
 function checkTxStatus (tx, type) {
-  if (tx.status === '0x1') {
+  if (tx.status) {
     return yo`<i class="${css.txStatus} ${css.succeeded} fa fa-check-circle"></i>`
   }
   if (type === 'call' || type === 'unknownCall') {
     return yo`<i class="${css.txStatus} ${css.call}">call</i>`
-  } else if (tx.status === '0x0') {
+  } else if (tx.status === false) {
     return yo`<i class="${css.txStatus} ${css.failed} fa fa-times-circle"></i>`
   } else {
     return yo`<i class="${css.txStatus} ${css.notavailable} fa fa-circle-thin" title='Status not available' ></i>`
@@ -321,12 +322,12 @@ function context (self, opts) {
   var from = opts.from ? helper.shortenHexData(opts.from) : ''
   var to = opts.to
   if (data.tx.to) to = to + ' ' + helper.shortenHexData(data.tx.to)
-  var val = data.tx.value
-  var hash = data.tx.hash ? helper.shortenHexData(data.tx.hash) : ''
-  var input = data.tx.input ? helper.shortenHexData(data.tx.input) : ''
+  var val = data.tx.specification.ContractValue
+  var hash = data.tx.id ? helper.shortenHexData(data.tx.id) : ''
+  var input = data.tx.specification.ContractData ? "0x" + helper.shortenHexData(data.tx.specification.ContractData) : ''
   var logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
-  var block = data.tx.blockNumber || ''
-  var i = data.tx.transactionIndex
+  var block = data.tx.outcome.ledgerVersion || ''
+  var i = data.tx.outcome.indexInLedger
   var value = val ? typeConversion.toInt(val) : 0
   if (executionContext.getProvider() === 'vm') {
     return yo`
@@ -348,7 +349,7 @@ function context (self, opts) {
           <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} drop</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>data:</span> ${input}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>logs:</span> ${logs}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>hash:</span> ${hash}</div>
@@ -363,7 +364,7 @@ function context (self, opts) {
           <span class='${css.tx}'>[block:${block} txIndex:${i}]</span>
           <div class=${css.txItem}><span class=${css.txItemTitle}>from:</span> ${from}</div>
           <div class=${css.txItem}><span class=${css.txItemTitle}>to:</span> ${to}</div>
-          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} wei</div>
+          <div class=${css.txItem}><span class=${css.txItemTitle}>value:</span> ${value} drop</div>
         </span>
       </div>`
   }
@@ -374,6 +375,7 @@ module.exports = TxLogger
 // helpers
 
 function txDetails (e, tx, data, obj) {
+  console.log(tx);
   var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
   var from = obj.from
   var to = obj.to
@@ -390,20 +392,22 @@ function txDetails (e, tx, data, obj) {
     log.appendChild(arrowUp)
     table = createTable({
       hash: data.tx.id,
-      status: data.receipt ? data.receipt.status : null,
+      // status: data.receipt ? data.receipt.status : null,
+      status: data.tx.status ? data.tx.status : null,
       isCall: data.tx.isCall,
-      contractAddress: data.tx.contractAddress,
+      contractAddress: data.tx.contractAddress ? data.tx.contractAddress : null,
       data: data.tx,
       from,
       to,
-      gas: data.tx.gas,
-      input: data.tx.input,
+      gas: data.tx.specification.Gas ? data.tx.specification.Gas : null,
+      input: "0x" + data.tx.specification.ContractData,
       'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
       'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
       logs: data.logs,
-      val: data.tx.value,
-      transactionCost: data.tx.transactionCost,
-      executionCost: data.tx.executionCost
+      val: data.tx.specification.ContractValue ? data.tx.specification.ContractValue : null,
+      transactionCost: data.tx.outcome.fee ? data.tx.outcome.fee : null,
+      // executionCost: data.tx.executionCost
+      executionCost: data.tx.executionCost ? data.tx.executionCost : null
     })
     tx.appendChild(table)
   }
@@ -414,13 +418,14 @@ function createTable (opts) {
   if (!opts.isCall) {
     var msg = ''
     if (opts.status) {
-      if (opts.status === '0x0') {
-        msg = ' Transaction mined but execution failed'
-      } else if (opts.status === '0x1') {
-        msg = ' Transaction mined and execution succeed'
-      }
+      // if (opts.status === '0x0') {
+      //   msg = ' Transaction mined but execution failed'
+      // } else if (opts.status === '0x1') {
+      //   msg = ' Transaction mined and execution succeed'
+      // }
+      msg = ', Transaction execution succeed'
     } else {
-      msg = ' Status not available at the moment'
+      msg = ', Transaction execution failed'
     }
     table.appendChild(yo`
       <tr class="${css.tr}">
@@ -494,7 +499,7 @@ function createTable (opts) {
     table.appendChild(yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> transaction cost </td>
-      <td class="${css.td}">${opts.transactionCost} gas ${callWarning}
+      <td class="${css.td}">${opts.transactionCost} drop ${callWarning}
         ${copyToClipboard(() => opts.transactionCost)}
       </td>
     </tr>`)
@@ -572,8 +577,8 @@ function createTable (opts) {
   val = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> value </td>
-      <td class="${css.td}">${val} wei
-        ${copyToClipboard(() => `${val} wei`)}
+      <td class="${css.td}">${val} drop
+        ${copyToClipboard(() => `${val} drop`)}
       </td>
     </tr>
   `

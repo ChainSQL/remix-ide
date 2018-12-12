@@ -48,17 +48,14 @@ function runTab (opts, localRegistry) {
         var select = document.getElementById('unit')
         var index = select.selectedIndex
         var selectedUnit = select.querySelectorAll('option')[index].dataset.unit
-        var unit = 'ether' // default
-        if (selectedUnit === 'ether') {
-          unit = 'ether'
-        } else if (selectedUnit === 'finney') {
-          unit = 'finney'
-        } else if (selectedUnit === 'gwei') {
-          unit = 'gwei'
-        } else if (selectedUnit === 'wei') {
-          unit = 'wei'
+        var unit = 'zxc' // default
+        if (selectedUnit === 'zxc') {
+          unit = 'zxc'
+        } else if (selectedUnit === 'drop') {
+          unit = 'drop'
         }
-        cb(null, executionContext.web3().toWei(number, unit))
+        // cb(null, executionContext.web3().toWei(number, unit))
+        cb(null, executionContext.chainsql().toDrop(number, unit))
       } catch (e) {
         cb(e)
       }
@@ -586,10 +583,8 @@ function settings (container, self) {
       <div class="${css.col1_1}">Value</div>
       <input type="text" class="${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
       <select name="unit" class="${css.col2_2}" id="unit">
-        <option data-unit="wei">wei</option>
-        <option data-unit="gwei">gwei</option>
-        <option data-unit="finney">finney</option>
-        <option data-unit="ether">ether</option>
+        <option data-unit="drop">drop</option>
+        <option data-unit="zxc">zxc</option>
       </select>
     </div>
   `

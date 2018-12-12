@@ -457,6 +457,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
         },
         function (error, result) {
           let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
+          console.log("[In runTransaction], origin tx:", tx)
           self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
 
           if (error && (typeof (error) !== 'string')) {
