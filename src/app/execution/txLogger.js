@@ -155,7 +155,7 @@ class TxLogger {
       } else {
         el = renderKnownTransaction(this, data)
       }
-      this.seen[data.tx.hash] = el
+      this.seen[data.tx.id] = el
       append(el)
     }, { activate: true, filterFn: filterTx })
 

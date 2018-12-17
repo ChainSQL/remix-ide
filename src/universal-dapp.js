@@ -52,11 +52,13 @@ function UniversalDApp (opts, localRegistry) {
     self.data.contractsDetails = success && data ? data.contracts : {}
   })
   self.accounts = {}
+  self.chainsqlAccounts = {}
   self.resetEnvironment()
 }
 
 UniversalDApp.prototype.resetEnvironment = function () {
   this.accounts = {}
+  this.chainsqlAccounts = {}
   if (executionContext.isVM()) {
     this._addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511', '0x56BC75E2D63100000')
     this._addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c', '0x56BC75E2D63100000')
@@ -92,11 +94,21 @@ UniversalDApp.prototype.newAccount = function (password, cb) {
     if (!this._deps.config.get('settings/personal-mode')) {
       return cb('Not running in personal mode')
     }
-    modalCustom.promptPassphraseCreation((error, passphrase) => {
-      if (error) {
+    modalCustom.promptAddAccount((error, inputAccount) => {
+      try {
+        let accountBySecret = executionContext.chainsql().generateAddress(inputAccount.secret)
+        if (inputAccount.address === accountBySecret.address) {
+          this.chainsqlAccounts[inputAccount.address] = inputAccount
+          cb(null, inputAccount.address)
+        }
+        else {
+          let errMsg = "the secret and address can not match, please check"
+          modalCustom.alert(errMsg)
+          cb(errMsg, null)
+        }
+      } catch (error) {
         modalCustom.alert(error)
-      } else {
-        executionContext.web3().personal.newAccount(passphrase, cb)
+        cb(error, null)
       }
     }, () => {})
   } else {
@@ -131,6 +143,7 @@ UniversalDApp.prototype.getAccounts = function (cb) {
   var self = this
 
   if (!executionContext.isVM()) {
+    cb(null, Object.keys(self.chainsqlAccounts))
     // Weirdness of web3: listAccounts() is sync, `getListAccounts()` is async
     // See: https://github.com/ethereum/web3.js/issues/442
     // if (this._deps.config.get('settings/personal-mode')) {
@@ -138,8 +151,6 @@ UniversalDApp.prototype.getAccounts = function (cb) {
     // } else {
     //   executionContext.web3().eth.getAccounts(cb)
     // }
-    //don't need to getAccount
-    cb(null, new Array([]))
   } else {
     if (!self.accounts) {
       return cb('No accounts?')
@@ -152,17 +163,36 @@ UniversalDApp.prototype.getAccounts = function (cb) {
 UniversalDApp.prototype.getBalance = function (address, cb) {
   var self = this
 
-  address = ethJSUtil.stripHexPrefix(address)
-
   if (!executionContext.isVM()) {
-    executionContext.web3().eth.getBalance(address, function (err, res) {
-      if (err) {
-        cb(err)
-      } else {
-        cb(null, res.toString(10))
-      }
-    })
+    if (JSON.stringify(self.chainsqlAccounts) === '{}') {
+      return cb('No accounts?')
+    }
+    if(executionContext.chainsql().api.isConnected()) {
+      console.log(address)
+      executionContext.chainsql().api.getBalances(address).then(balanceObj => {
+        for(let item of balanceObj) {
+          if(item.currency === "ZXC") {
+            cb(null, item.value)
+          }
+        }
+        cb("can't get balance")
+      }).catch(error => {
+        cb(error, null)
+      })
+    }
+    else {
+      cb('have not connected to chainsql')
+    }
+    // executionContext.web3().eth.getBalance(address, function (err, res) {
+    //   if (err) {
+    //     cb(err)
+    //   } else {
+    //     cb(null, res.toString(10))
+    //   }
+    // })
+    //return cb('No accounts?')
   } else {
+    address = ethJSUtil.stripHexPrefix(address)
     if (!self.accounts) {
       return cb('No accounts?')
     }
@@ -183,7 +213,12 @@ UniversalDApp.prototype.getBalanceInEther = function (address, callback) {
     if (error) {
       callback(error)
     } else {
-      callback(null, executionContext.web3().fromWei(balance, 'ether'))
+      if(executionContext.isVM()) {
+        callback(null, executionContext.web3().fromWei(balance, 'ether'))
+      }
+      else {
+        callback(null, balance)
+      }
     }
   })
 }
@@ -339,15 +374,16 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       })
     },
     function getAccount (value, gasLimit, next) {
-      if (executionContext.getProvider() === 'chainsql') {
-        const RootUser = {
-          secret: 'xnoPBzXtMeMyMHUVTgbuqAfg1SUTb',
-          address: 'zHb9CJAWyB4zj91VRWn96DkukG4bwdtyTh'
-        }
-        executionContext.chainsql().as(RootUser)
+      // if (executionContext.getProvider() === 'chainsql') {
+      //   const RootUser = {
+      //     secret: 'xnoPBzXtMeMyMHUVTgbuqAfg1SUTb',
+      //     address: 'zHb9CJAWyB4zj91VRWn96DkukG4bwdtyTh'
+      //   }
+      //   executionContext.chainsql().as(RootUser)
 
-        next(null, RootUser.address, value, gasLimit)
-      }
+      //   next(null, RootUser.address, value, gasLimit)
+      // }
+
       // if (args.from) {
       //   return next(null, args.from, value, gasLimit)
       // }
@@ -356,16 +392,19 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       //     next(err, address, value, gasLimit)
       //   })
       // }
-      // self.getAccounts(function (err, accounts) {
-      //   let address = accounts[0]
+      self.getAccounts(function (err, accounts) {
+        let address = accounts[0]
 
-      //   if (err) return next(err)
-      //   if (!address) return next('No accounts available')
-      //   if (executionContext.isVM() && !self.accounts[address]) {
-      //     return next('Invalid account selected')
-      //   }
-      //   next(null, address, value, gasLimit)
-      // })
+        if (err) return next(err)
+        if (!address) return next('No accounts available')
+        if (executionContext.isVM() && !self.accounts[address]) {
+          return next('Invalid account selected')
+        }
+        console.log(address)
+        console.log(self.chainsqlAccounts)
+        executionContext.chainsql().as(self.chainsqlAccounts[address])
+        next(null, address, value, gasLimit)
+      })
     },
     function runTransaction (fromAddress, value, gasLimit, next) {
       let funAbi = {}

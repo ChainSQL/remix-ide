@@ -1,9 +1,14 @@
 var async = require('async')
 
 module.exports = {
-  shortenAddress: function (address, etherBalance) {
+  shortenAddress: function (address, balance, isVM) {
     var len = address.length
-    return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (etherBalance ? ' (' + etherBalance.toString() + ' ether)' : '')
+    if(isVM) {
+      return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (balance ? ' (' + balance.toString() + ' ether)' : '')
+    }
+    else {
+      return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (balance ? ' (' + balance.toString() + ' zxc)' : '')
+    }
   },
   shortenHexData: function (data) {
     if (!data) return ''

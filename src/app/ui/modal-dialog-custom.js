@@ -12,23 +12,27 @@ module.exports = {
   promptPassphrase: function (title, text, inputValue, ok, cancel) {
     prompt(title, text, true, inputValue, ok, cancel)
   },
-  promptPassphraseCreation: function (ok, cancel) {
-    var text = 'Please provide a Passphrase for the account creation'
+  // promptPassphraseCreation: function (ok, cancel) {
+  promptAddAccount: function (ok, cancel) {
+    var text = 'Please provide a pair of address and secret key'
     var input = yo`<div>
-      <input id="prompt1" type="password" name='prompt_text' class="${css['prompt_text']}" >
+      <input id="address" type="address" name='prompt_addr' class="${css['prompt_addr']}" >
       <br>
       <br>
-      <input id="prompt2" type="password" name='prompt_text' class="${css['prompt_text']}" >
+      <input id="secret" type="secret" name='prompt_seckey' class="${css['prompt_seckey']}" >
     </div>`
     modal(null, yo`<div>${text}<div>${input}</div></div>`,
       {
         fn: () => {
           if (typeof ok === 'function') {
-            if (input.querySelector('#prompt1').value === input.querySelector('#prompt2').value) {
-              ok(null, input.querySelector('#prompt1').value)
-            } else {
-              ok('Passphase does not match')
-            }
+            let inputAccount = {}
+            inputAccount.address = input.querySelector('#address').value
+            inputAccount.secret = input.querySelector('#secret').value
+            // if (input.querySelector('#prompt1').value === input.querySelector('#prompt2').value) {
+            ok(null, inputAccount)
+            // } else {
+            //   ok('Passphase does not match')
+            // }
           }
         }
       },

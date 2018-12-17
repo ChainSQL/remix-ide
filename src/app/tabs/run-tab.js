@@ -155,11 +155,7 @@ function fillAccountsList (container, self) {
       if (accountListCallId > callid) return
       accountListCallId++
       if (err) { addTooltip(`Cannot get account list: ${err}`) }
-      if (executionContext.getProvider() === 'chainsql') {
-        $('#txorigin').empty()
-        console.log('empty the select')
-        return
-      }
+
       for (var loadedaddress in loadedAccounts) {
         console.log(loadedaddress)
         if (accounts.indexOf(loadedaddress) === -1) {
@@ -188,7 +184,7 @@ function updateAccountBalances (container, self) {
     (function (acc) {
       self._deps.udapp.getBalanceInEther(accounts[acc].value, function (err, res) {
         if (!err) {
-          accounts[acc].innerText = helper.shortenAddress(accounts[acc].value, res)
+          accounts[acc].innerText = helper.shortenAddress(accounts[acc].value, res, executionContext.isVM())
         }
       })
     })(index)
@@ -470,12 +466,12 @@ function contractDropdown (events, self) {
     if (noInstancesText.parentNode) { noInstancesText.parentNode.removeChild(noInstancesText) }
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     var address = atAddressButtonInput.value
-    if (!ethJSUtil.isValidAddress(address)) {
-      return modalDialogCustom.alert('Invalid address.')
-    }
-    if (/[a-f]/.test(address) && /[A-F]/.test(address) && !ethJSUtil.isValidChecksumAddress(address)) {
-      return modalDialogCustom.alert('Invalid checksum address.')
-    }
+    // if (!ethJSUtil.isValidAddress(address)) {
+    //   return modalDialogCustom.alert('Invalid address.')
+    // }
+    // if (/[a-f]/.test(address) && /[A-F]/.test(address) && !ethJSUtil.isValidChecksumAddress(address)) {
+    //   return modalDialogCustom.alert('Invalid checksum address.')
+    // }
     if (/.(.abi)$/.exec(self._deps.config.get('currentFile'))) {
       modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition ?', () => {
         var abi
@@ -563,7 +559,7 @@ function settings (container, self) {
     <div class="${css.crow}">
       <div class="${css.col1_1}">
         Account
-        <i class="fa fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${newAccount} title="Create a new account"></i>
+        <i class="fa fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${newAccount} title="Add a new account"></i>
       </div>
       <div class=${css.account}>
         <select name="txorigin" class="${css.select}" id="txorigin"></select>
@@ -662,7 +658,8 @@ function settings (container, self) {
       if (!error) {
         addTooltip(`account ${address} created`)
       } else {
-        addTooltip('Cannot create an account: ' + error)
+        console.log(error)
+        // addTooltip('Cannot create an account: ' + error)
       }
     })
   }
