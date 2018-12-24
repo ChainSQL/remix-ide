@@ -54,7 +54,6 @@ function runTab (opts, localRegistry) {
         } else if (selectedUnit === 'drop') {
           unit = 'drop'
         }
-        // cb(null, executionContext.web3().toWei(number, unit))
         cb(null, executionContext.chainsql().toDrop(number, unit))
       } catch (e) {
         cb(e)
@@ -530,7 +529,8 @@ function settings (container, self) {
           console.error(err)
           net.innerHTML = 'can\'t detect network '
         } else {
-          net.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name} (${id || '-'})`
+          // net.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name} (${id || '-'})`
+          net.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> ${name}`
         }
         if (cb) cb(err, {id, name})
       })
@@ -539,28 +539,24 @@ function settings (container, self) {
   var environmentEl = yo`
     <div class="${css.crow}">
       <div id="selectExEnv" class="${css.col1_1}">
-        Environment
+        Node
+        <i class="fa fa-plus-circle ${css.icon}" aria-hidden="true" onclick=${newNode} title="Add a new ChainSQL node"></i>
       </div>
       <div class=${css.environment}>
         ${net}
         <select id="selectExEnvOptions" onchange=${() => { updateNetwork() }} class="${css.select}">
-          <option id="vm-mode"
-            title="Execution environment does not connect to any node, everything is local and in memory only."
-            value="vm" checked name="executionContext"> JavaScript VM
-          </option>
-          <option id="chainsql-mode"
-            title="Execution environment connects to node at localhost, transactions will be sent to the network and can cause loss of money or worse!
-            If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http."
-            value="chainsql" name="executionContext"> ChainSQL Node
-          </option>
         </select>
         <a href="http://chainsql.net" target="_blank"><i class="${css.icon} fa fa-info"></i></a>
       </div>
     </div>
   `
-  // <option id="injected-mode"
-  //           title="Execution environment has been provided by Metamask or similar provider."
-  //           value="injected" checked name="executionContext"> Injected Web3
+  // <option id="chainsql-mode"
+  //           title="Execution environment connects to node at localhost, transactions will be sent to the network and can cause loss of money or worse!"
+  //           value="chainsql" checked name="executionContext"> ChainSQL Node
+  //         </option>
+  // <option id="vm-mode"
+  //           title="Execution environment does not connect to any node, everything is local and in memory only."
+  //           value="vm" checked name="executionContext"> JavaScript VM
   //         </option>
   // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
   var accountEl = yo`
@@ -613,7 +609,7 @@ function settings (container, self) {
 
   function setFinalContext () {
     // set the final context. Cause it is possible that this is not the one we've originaly selected
-    selectExEnv.value = executionContext.getProvider()
+    //selectExEnv.value = executionContext.getProvider()
     self.event.trigger('clearInstance', [])
     updateNetwork()
     fillAccountsList(el, self)
@@ -632,7 +628,7 @@ function settings (container, self) {
     let context = selectExEnv.options[selectExEnv.selectedIndex].value
     console.log('context:' + context)
     executionContext.executionContextChange(context, null, () => {
-      modalDialogCustom.confirm(null, 'Are you sure you want to connect to a chainsql node?', () => {
+      modalDialogCustom.confirm(null, 'Are you sure you want to connect to a ChainSQL node?', () => {
         modalDialogCustom.prompt(null, 'ChainSQL Websocket Address', 'ws://localhost:5215', (target) => {
           executionContext.setProviderFromEndpoint(target, context, (alertMsg) => {
             if (alertMsg) {
@@ -660,6 +656,25 @@ function settings (container, self) {
   setInterval(() => {
     updateAccountBalances(container, self)
   }, 10000)
+
+  function newNode () {
+    modalDialogCustom.prompt(null, 'ChainSQL Websocket Address', 'ws://localhost:5215', (target) => {
+      executionContext.setProviderFromEndpoint(target, 'chainsql', (isSuccess, promptMsg) => {
+        if (isSuccess) {
+          fillNodeList(target)
+        }
+        modalDialogCustom.alert(promptMsg)
+        setFinalContext()
+      })
+    }, setFinalContext)
+  }
+
+  function fillNodeList (wsAddr) {
+    var selectExEnvOptions = container.querySelector('#selectExEnvOptions')
+    let showAddr = wsAddr.substr(5)
+    selectExEnvOptions.appendChild(yo`<option value="${showAddr}" >${showAddr}</option>`)
+    selectExEnvOptions.setAttribute('value', wsAddr)
+  }
 
   function newAccount () {
     self._deps.udapp.newAccount('', (error, address) => {

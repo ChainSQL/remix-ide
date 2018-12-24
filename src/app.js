@@ -513,7 +513,7 @@ Please only use it if you know what you are doing, otherwise visit the stable ve
       let endPointUrl = queryParams.get().endPointUrl
       executionContext.setContext(context, endPointUrl,
       () => {
-        modalDialogCustom.confirm(null, 'Are you sure you want to connect to an chainsql node?', () => {
+        modalDialogCustom.confirm(null, 'Are you sure you want to connect to a ChainSQL node?', () => {
           if (!endPointUrl) {
             endPointUrl = 'ws://localhost:5215'
           }
