@@ -432,24 +432,24 @@ module.exports = class CompileTab {
   }
   fetchAllVersion (callback) {
     var self = this
-    minixhr(`${self.data.baseurl}/list.json`, function (json, event) {
+    // minixhr(`${self.data.baseurl}/list.json`, function (json, event) {
       // @TODO: optimise and cache results to improve app loading times
       var allversions, selectedVersion
-      if (event.type !== 'error') {
-        try {
-          const data = JSON.parse(json)
-          allversions = data.builds.slice().reverse()
-          selectedVersion = data.releases[data.latestRelease]
-          if (self._components.queryParams.get().version) selectedVersion = self._components.queryParams.get().version
-        } catch (e) {
-          tooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
-        }
-      } else {
+      // if (event.type !== 'error') {
+      //   try {
+      //     const data = JSON.parse(json)
+      //     allversions = data.builds.slice().reverse()
+      //     selectedVersion = data.releases[data.latestRelease]
+      //     if (self._components.queryParams.get().version) selectedVersion = self._components.queryParams.get().version
+      //   } catch (e) {
+      //     tooltip('Cannot load compiler version list. It might have been blocked by an advertisement blocker. Please try deactivating any of them from this page and reload.')
+      //   }
+      // } else {
         allversions = [{ path: 'builtin', longVersion: 'latest local version' }]
         selectedVersion = 'builtin'
-      }
+      // }
       callback(allversions, selectedVersion)
-    })
+    // })
   }
 }
 

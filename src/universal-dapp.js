@@ -102,7 +102,7 @@ UniversalDApp.prototype.newAccount = function (password, cb) {
           cb(null, inputAccount.address)
         }
         else {
-          let errMsg = "the secret and address can not match, please check"
+          let errMsg = 'the secret and address can not match, please check'
           modalCustom.alert(errMsg)
           cb(errMsg, null)
         }
@@ -266,7 +266,16 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
             }
           }
           if (lookupOnly) {
-            var decoded = uiUtil.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : new Array(txResult), args.funABI)
+            let resultArray = new Array()
+            if(typeof(txResult) !== 'string' && txResult.hasOwnProperty(0)){
+              for (let key in txResult) {
+                resultArray.push(txResult[key])
+              }
+            }
+            else {
+              resultArray.push(txResult)
+            }
+            var decoded = uiUtil.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : resultArray, args.funABI)
             outputCb(decoded)
           }
         } else {
@@ -496,7 +505,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
         },
         function (error, result) {
           let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
-          console.log("[In runTransaction], origin tx:", tx)
+          console.log('[In runTransaction], origin tx:', tx)
           self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
 
           if (error && (typeof (error) !== 'string')) {

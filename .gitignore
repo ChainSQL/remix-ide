@@ -1,7 +1,7 @@
 .vscode
 node_modules
 reports
-soljson.js
+#soljson.js
 soljson.js.*
 npm-debug.log*
 package-lock.json

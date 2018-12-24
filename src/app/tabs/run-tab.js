@@ -157,17 +157,17 @@ function fillAccountsList (container, self) {
       if (err) { addTooltip(`Cannot get account list: ${err}`) }
 
       for (var loadedaddress in loadedAccounts) {
-        console.log(loadedaddress)
+        //console.log(loadedaddress)
         if (accounts.indexOf(loadedaddress) === -1) {
-          console.log('need rmove')
+          //console.log('need rmove')
           txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
           delete loadedAccounts[loadedaddress]
         }
       }
-      console.log('begin to add addr')
+      //console.log('begin to add addr')
       for (var i in accounts) {
         var address = accounts[i]
-        console.log(address)
+        //console.log(address)
         if (!loadedAccounts[address]) {
           txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
           loadedAccounts[address] = 1
@@ -380,7 +380,7 @@ function contractDropdown (events, self) {
     // self._deps.logCallback(`${JSON.stringify(selectedContract)}`)
     // self._deps.logCallback(`=========================`)
     // self._deps.logCallback(`${JSON.stringify(data)}`)
-    executionContext.initContractObj(selectedContract.name, selectedContract.contract.object.abi)
+    executionContext.initContractObj(false, selectedContract.name, selectedContract.contract.object.abi)
     self._deps.udapp.createContract(data, (error, txResult) => {
       console.log(txResult)
       if (!error) {
@@ -483,8 +483,16 @@ function contractDropdown (events, self) {
         instanceContainer.appendChild(self._deps.udappUI.renderInstanceFromABI(abi, address, address))
       })
     } else {
-      var contract = self._deps.compiler.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
-      instanceContainer.appendChild(self._deps.udappUI.renderInstance(contract.object, address, selectContractNames.value))
+      self._deps.udapp.getAccounts((err, accounts) => {
+        if (err) { addTooltip(`Cannot get account list: ${err}`) }
+        let asAddress = accounts[0]
+        console.log(asAddress)
+        if(!asAddress) return modalDialogCustom.alert('No accounts available.')
+        executionContext.chainsql().as(self._deps.udapp.chainsqlAccounts[asAddress])
+        var contract = self._deps.compiler.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
+        executionContext.initContractObj(true, selectContractNames.value, contract.object.abi, address)
+        instanceContainer.appendChild(self._deps.udappUI.renderInstance(contract.object, address, selectContractNames.value))
+      })
     }
   }
 

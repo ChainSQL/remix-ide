@@ -403,7 +403,7 @@ function txDetails (e, tx, data, obj) {
       input: "0x" + data.tx.specification.ContractData,
       'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
       'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
-      logs: data.logs,
+      logs: null, /*data.logs,*/
       val: data.tx.specification.ContractValue ? data.tx.specification.ContractValue : null,
       transactionCost: data.tx.outcome.fee ? data.tx.outcome.fee : null,
       // executionCost: data.tx.executionCost
