@@ -41,7 +41,9 @@ Or if you want to clone the github repository (`wget` need to be installed first
 git clone -b develop https://github.com/ChainSQL/remix-ide.git
 cd remix-ide
 npm install
-npm run setupremix  # this will clone https://github.com/ChainSQL/remix for you and link it to remix-ide. Only execute this step if you want to contribute on ChainSQL Remix development
+npm install chainsql
+npm run buildapp
+#npm run setupremix  # this will clone https://github.com/ChainSQL/remix for you and link it to remix-ide. Only execute this step if you want to contribute on ChainSQL Remix development
 npm start
 ```
 
