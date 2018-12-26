@@ -6,7 +6,7 @@ var VmDebugger = require('./VmDebugger')
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
 
-var remixLib = require('remix-lib')
+var remixLib = require('chainsql-remix-lib')
 var executionContext = remixLib.execution.executionContext
 var EventManager = remixLib.EventManager
 

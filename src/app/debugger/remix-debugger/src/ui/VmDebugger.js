@@ -11,7 +11,7 @@ var StepDetail = require('./StepDetail')
 var DropdownPanel = require('./DropdownPanel')
 var SolidityState = require('./SolidityState')
 var SolidityLocals = require('./SolidityLocals')
-var remixDebug = require('remix-debug')
+var remixDebug = require('chainsql-remix-debug')
 var StorageResolver = remixDebug.storage.StorageResolver
 var yo = require('yo-yo')
 

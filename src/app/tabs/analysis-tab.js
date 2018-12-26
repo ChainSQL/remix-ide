@@ -1,6 +1,6 @@
 var yo = require('yo-yo')
 var csjs = require('csjs-inject')
-var remixLib = require('remix-lib')
+var remixLib = require('chainsql-remix-lib')
 var StaticAnalysis = require('../staticanalysis/staticAnalysisView')
 
 var globalRegistry = require('../../global/registry')

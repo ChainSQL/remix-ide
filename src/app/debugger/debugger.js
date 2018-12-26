@@ -1,7 +1,7 @@
 'use strict'
 var EthdebuggerUI = require('./remix-debugger/src/ui/EthdebuggerUI')
-var Ethdebugger = require('remix-debug').EthDebugger
-var remixLib = require('remix-lib')
+var Ethdebugger = require('chainsql-remix-debug').EthDebugger
+var remixLib = require('chainsql-remix-lib')
 var executionContext = require('../../execution-context')
 var globlalRegistry = require('../../global/registry')
 

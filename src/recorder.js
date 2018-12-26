@@ -1,4 +1,4 @@
-var remixLib = require('remix-lib')
+var remixLib = require('chainsql-remix-lib')
 var EventManager = remixLib.EventManager
 var ethutil = require('ethereumjs-util')
 var executionContext = require('./execution-context')

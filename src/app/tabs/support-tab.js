@@ -1,6 +1,6 @@
 const yo = require('yo-yo')
 const csjs = require('csjs-inject')
-const remixLib = require('remix-lib')
+const remixLib = require('chainsql-remix-lib')
 
 var globalRegistry = require('../../global/registry')
 const styles = require('../ui/styles-guide/theme-chooser').chooser()

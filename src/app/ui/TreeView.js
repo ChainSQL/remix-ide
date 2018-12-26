@@ -28,7 +28,7 @@ var css = csjs`
   }
 `
 
-var remixLib = require('remix-lib')
+var remixLib = require('chainsql-remix-lib')
 var EventManager = remixLib.EventManager
 
 /**

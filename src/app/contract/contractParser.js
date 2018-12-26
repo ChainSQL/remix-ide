@@ -1,6 +1,6 @@
 'use strict'
 
-var remixLib = require('remix-lib')
+var remixLib = require('chainsql-remix-lib')
 var txHelper = remixLib.execution.txHelper
 
 module.exports = (contractName, contract, compiledSource) => {

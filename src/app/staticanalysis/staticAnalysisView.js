@@ -1,8 +1,8 @@
 'use strict'
-var StaticAnalysisRunner = require('remix-analyzer').CodeAnalysis
+var StaticAnalysisRunner = require('chainsql-remix-analyzer').CodeAnalysis
 var yo = require('yo-yo')
 var $ = require('jquery')
-var remixLib = require('remix-lib')
+var remixLib = require('chainsql-remix-lib')
 var utils = remixLib.util
 
 var styleGuide = require('../ui/styles-guide/theme-chooser')

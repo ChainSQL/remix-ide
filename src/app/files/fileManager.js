@@ -1,7 +1,7 @@
 'use strict'
 
 var $ = require('jquery')
-var remixLib = require('remix-lib')
+var remixLib = require('chainsql-remix-lib')
 var yo = require('yo-yo')
 var EventManager = remixLib.EventManager
 var globalRegistry = require('../../global/registry')

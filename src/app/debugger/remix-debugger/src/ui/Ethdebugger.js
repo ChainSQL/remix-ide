@@ -1,7 +1,7 @@
 'use strict'
 var TxBrowser = require('./TxBrowser')
 var StepManager = require('./StepManager')
-var remixLib = require('remix-lib')
+var remixLib = require('chainsql-remix-lib')
 var TraceManager = remixLib.trace.TraceManager
 var VmDebugger = require('./VmDebugger')
 var init = remixLib.init
@@ -12,7 +12,7 @@ var csjs = require('csjs-inject')
 var Web3Providers = remixLib.vm.Web3Providers
 var DummyProvider = remixLib.vm.DummyProvider
 var CodeManager = remixLib.code.CodeManager
-var remixDebug = require('remix-debug')
+var remixDebug = require('chainsql-remix-debug')
 var SolidityProxy = remixDebug.SolidityDecoder.SolidityProxy
 var InternalCallTree = remixDebug.SolidityDecoder.InternalCallTree
 

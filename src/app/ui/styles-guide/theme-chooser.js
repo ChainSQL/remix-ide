@@ -1,7 +1,7 @@
 // var remixLib = require('remix-lib')
 var styleGuideLight = require('./style-guide')
 var styleGuideDark = require('./styleGuideDark')
-var Storage = require('remix-lib').Storage
+var Storage = require('chainsql-remix-lib').Storage
 module.exports = {
 
   chooser: function () {
