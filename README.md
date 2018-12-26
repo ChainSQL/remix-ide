@@ -6,21 +6,23 @@
 
 # Remix
 
-Remix is a browser-based compiler and IDE that enables users to build **Ethereum contracts with Solidity language** and to debug transactions.
+This Remix is forked from Ethereum Remix
 
-To try it out, visit [https://remix.ethereum.org](https://remix.ethereum.org).
+Remix is a browser-based compiler and IDE that enables users to build **ChainSQL contracts with Solidity language** and to debug transactions.
 
-https://github.com/ethereum/remix-ide/releases also gives others ways to use Remix locally. Please check it out.
+To try it out, visit [https://remix.chainsql.org](https://remix.chainsql.org).
+
+https://github.com/ChainSQL/remix-ide/releases also gives others ways to use Remix locally. Please check it out.
 
 Remix consists of many modules and in this repository you will find the Remix IDE (aka. Browser-Solidity).
 
-![Remix screenshot](https://i.imgur.com/clfc7US.png)
+![Remix screenshot](https://img.vim-cn.com/e3/8cca443838ca8053497a38ce1996581529f224.png)
 
 ## Offline Usage
 
-The `gh-pages` branch has always the latest stable build of Remix. It also contains a ZIP file with the entire build. Download it to use offline.
+~~~The `gh-pages` branch has always the latest stable build of Remix. It also contains a ZIP file with the entire build. Download it to use offline.~~~
 
-Note: it contains the latest release of Solidity available at the time of the packaging. No other compiler versions are supported.
+~~~Note: it contains the latest release of Solidity available at the time of the packaging. No other compiler versions are supported.~~~
 
 
 ## INSTALLATION:
@@ -30,16 +32,16 @@ Install **npm** and **node.js** (see https://docs.npmjs.com/getting-started/inst
 Remix-ide has been published as an npm module:
 
 ```bash
-npm install remix-ide -g
-remix-ide
+npm install chainsql-remix-ide -g
+chainsql-remix-ide
 ```
 Or if you want to clone the github repository (`wget` need to be installed first) :
 
 ```bash
-git clone https://github.com/ethereum/remix-ide.git
+git clone https://github.com/ChainSQL/remix-ide.git
 cd remix-ide
 npm install
-npm run setupremix  # this will clone https://github.com/ethereum/remix for you and link it to remix-ide. Only execute this step if you want to contribute on Remix development
+npm run setupremix  # this will clone https://github.com/ChainSQL/remix for you and link it to remix-ide. Only execute this step if you want to contribute on ChainSQL Remix development
 npm start
 ```
 
@@ -56,7 +58,7 @@ Most of the the time working with other modules (like debugger etc.) hosted in t
 
 Some things to consider if you have trouble building the package:
 
-- Make sure that you have the correct version of `node`, `npm` and `nvm`. You can find the version that is tested on Travis CI by looking at the log in the [build results](https://travis-ci.org/ethereum/remix-ide).
+- Make sure that you have the correct version of `node`, `npm` and `nvm`. ~~~You can find the version that is tested on Travis CI by looking at the log in the [build results](https://travis-ci.org/ethereum/remix-ide).~~~
 
 Run:
 
@@ -95,7 +97,7 @@ Then you will need to either:
 	- Run: `sc -u <USERNAME> -k <ACCESS_KEY>` (see `.travis.yml` for values)
 	- Run: `npm run browser-test-sc`
 
-## Usage as a Chrome Extension
+## Usage as a Chrome Extension(Unsupport Now)
 
 If you would like to use this as a Chrome extension, you must either build it first or pull from the `gh-pages` branch, both described above.
 After that, follow these steps:
@@ -107,4 +109,4 @@ After that, follow these steps:
 
 ## Documentation
 
-To see details about how to use Remix for developing and/or debugging Solidity contracts, please see [our documentation page](https://remix.readthedocs.io)
+To see details about how to use Remix for developing and/or debugging Solidity contracts, please see [remix documentation page](https://remix.readthedocs.io)
