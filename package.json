@@ -146,7 +146,7 @@
   },
   "scripts": {
     "setupremix": "npm run pullremix && npm run linkremixlib && npm run linkremixsolidity;",
-    "pullremix": "git clone https://github.com/ethereum/remix",
+    "pullremix": "git clone -b develop https://github.com/ChainSQL/remix",
     "linkremixlib": "cd node_modules && rm -rf remix-lib && ln -s ../remix/remix-lib remix-lib && cd ..",
     "linkremixsolidity": "cd node_modules && rm -rf remix-solidity && ln -s ../remix/remix-solidity remix-solidity && cd ..",
     "build": "browserify src/index.js -o build/app.js --exclude solc",

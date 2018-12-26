@@ -6,7 +6,7 @@
 
 # Remix
 
-This Remix is forked from Ethereum Remix
+**This Remix is forked from Ethereum Remix**
 
 Remix is a browser-based compiler and IDE that enables users to build **ChainSQL contracts with Solidity language** and to debug transactions.
 
@@ -16,20 +16,20 @@ https://github.com/ChainSQL/remix-ide/releases also gives others ways to use Rem
 
 Remix consists of many modules and in this repository you will find the Remix IDE (aka. Browser-Solidity).
 
-![Remix screenshot](https://img.vim-cn.com/e3/8cca443838ca8053497a38ce1996581529f224.png)
+![Remix screenshot](https://img.vim-cn.com/d0/345a62616f442327d4635f2b164783abc31a67.png)
 
 ## Offline Usage
 
-~~~The `gh-pages` branch has always the latest stable build of Remix. It also contains a ZIP file with the entire build. Download it to use offline.~~~
+~~The `gh-pages` branch has always the latest stable build of Remix. It also contains a ZIP file with the entire build. Download it to use offline.~~
 
-~~~Note: it contains the latest release of Solidity available at the time of the packaging. No other compiler versions are supported.~~~
+~~Note: it contains the latest release of Solidity available at the time of the packaging. No other compiler versions are supported.~~
 
 
 ## INSTALLATION:
 
 Install **npm** and **node.js** (see https://docs.npmjs.com/getting-started/installing-node), then do:
 
-Remix-ide has been published as an npm module:
+Remix-ide has been published as an npm module(**Unsupport Now**):
 
 ```bash
 npm install chainsql-remix-ide -g
@@ -38,7 +38,7 @@ chainsql-remix-ide
 Or if you want to clone the github repository (`wget` need to be installed first) :
 
 ```bash
-git clone https://github.com/ChainSQL/remix-ide.git
+git clone -b develop https://github.com/ChainSQL/remix-ide.git
 cd remix-ide
 npm install
 npm run setupremix  # this will clone https://github.com/ChainSQL/remix for you and link it to remix-ide. Only execute this step if you want to contribute on ChainSQL Remix development
@@ -58,7 +58,7 @@ Most of the the time working with other modules (like debugger etc.) hosted in t
 
 Some things to consider if you have trouble building the package:
 
-- Make sure that you have the correct version of `node`, `npm` and `nvm`. ~~~You can find the version that is tested on Travis CI by looking at the log in the [build results](https://travis-ci.org/ethereum/remix-ide).~~~
+- Make sure that you have the correct version of `node`, `npm` and `nvm`. ~~You can find the version that is tested on Travis CI by looking at the log in the [build results](https://travis-ci.org/ethereum/remix-ide).~~
 
 Run:
 
