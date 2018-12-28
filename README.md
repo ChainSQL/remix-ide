@@ -10,7 +10,7 @@
 
 Remix is a browser-based compiler and IDE that enables users to build **ChainSQL contracts with Solidity language** and to debug transactions.
 
-To try it out, visit [https://remix.chainsql.org](https://remix.chainsql.org).
+To try it out, visit [https://remix.chainsql.net](https://remix.chainsql.net).
 
 https://github.com/ChainSQL/remix-ide/releases also gives others ways to use Remix locally. Please check it out.
 

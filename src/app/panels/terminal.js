@@ -376,7 +376,7 @@ class Terminal {
                     <li>Running JavaScript scripts. The following libraries are accessible:
                       <ul class=${css2.ul}>
                         <li><a target="_blank" href="http://chainsql.net/">ChainSQL</a></li>
-                        <li><a target="_blank" href="https://www.npmjs.com/package/chainsql">chainsql-NodeJS</a> </li>
+                        <li><a target="_blank" href="https://www.npmjs.com/package/chainsql">ChainSQL-NodeJS</a> </li>
                       </ul>
                     </li>
                     <li>Executing common command to interact with the Remix interface (see list of commands above). Note that these commands can also be included and run from a JavaScript script.</li>

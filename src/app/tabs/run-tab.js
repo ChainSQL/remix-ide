@@ -662,9 +662,9 @@ function settings (container, self) {
       executionContext.setProviderFromEndpoint(target, 'chainsql', (isSuccess, promptMsg) => {
         if (isSuccess) {
           fillNodeList(target)
+          setFinalContext()
         }
         modalDialogCustom.alert(promptMsg)
-        setFinalContext()
       })
     }, setFinalContext)
   }
@@ -672,8 +672,8 @@ function settings (container, self) {
   function fillNodeList (wsAddr) {
     var selectExEnvOptions = container.querySelector('#selectExEnvOptions')
     let showAddr = wsAddr.substr(5)
-    selectExEnvOptions.appendChild(yo`<option value="${showAddr}" >${showAddr}</option>`)
-    selectExEnvOptions.setAttribute('value', wsAddr)
+    selectExEnvOptions.appendChild(yo`<option selected="true" value="${showAddr}" >${showAddr}</option>`)
+    selectExEnvOptions.setAttribute('value', showAddr)
   }
 
   function newAccount () {

@@ -14,12 +14,14 @@ module.exports = {
   },
   // promptPassphraseCreation: function (ok, cancel) {
   promptAddAccount: function (ok, cancel) {
-    var text = 'Please provide a pair of address and secret key'
+    var text = 'Please provide a pair of address and secret key :'
     var input = yo`<div>
-      <input id="address" type="address" name='prompt_addr' class="${css['prompt_addr']}" >
+      <div class="${css.prompt_text}">Address</div>
+      <input id="address" type="address" name='prompt_addr' class="${css['prompt_text']}" >
       <br>
       <br>
-      <input id="secret" type="secret" name='prompt_seckey' class="${css['prompt_seckey']}" >
+      <div class="${css.prompt_text}">Secret</div>
+      <input id="secret" type="secret" name='prompt_seckey' class="${css['prompt_text']}" >
     </div>`
     modal(null, yo`<div>${text}<div>${input}</div></div>`,
       {
