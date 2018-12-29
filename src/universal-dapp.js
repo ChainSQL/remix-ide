@@ -242,7 +242,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
     }
   }
   // contractsDetails is used to resolve libraries
-  console.log(args.contractAbi)
+
   console.log(value)
   txFormat.buildData(args.contractName, args.contractAbi, self.data.contractsDetails, false, args.funABI, value, (error, data) => {
     if (!error) {
