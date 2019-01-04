@@ -65,8 +65,8 @@ Some things to consider if you have trouble building the package:
 Run:
 
 ```bash
-node --version
-npm --version
+node --version # we need at least v10.13.0
+npm --version  # we need at least V6.4.1
 nvm --version
 ```
 

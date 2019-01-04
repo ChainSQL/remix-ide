@@ -148,7 +148,7 @@ class TxLogger {
 
     this.logKnownTX = this._deps.editorPanel.registerCommand('knownTransaction', (args, cmds, append) => {
       var data = args[0]
-      console.log("[logKnowTX]:", data)
+      console.log('[logKnowTX]:', data)
       var el
       if (data.tx.isCall) {
         el = renderCall(this, data)
@@ -324,7 +324,7 @@ function context (self, opts) {
   if (data.tx.to) to = to + ' ' + helper.shortenHexData(data.tx.to)
   var val = data.tx.specification.ContractValue
   var hash = data.tx.id ? helper.shortenHexData(data.tx.id) : ''
-  var input = data.tx.specification.ContractData ? "0x" + helper.shortenHexData(data.tx.specification.ContractData) : ''
+  var input = data.tx.specification.ContractData ? '0x' + helper.shortenHexData(data.tx.specification.ContractData) : ''
   var logs = data.logs && data.logs.decoded && data.logs.decoded.length ? data.logs.decoded.length : 0
   var block = data.tx.outcome.ledgerVersion || ''
   var i = data.tx.outcome.indexInLedger
@@ -375,7 +375,7 @@ module.exports = TxLogger
 // helpers
 
 function txDetails (e, tx, data, obj) {
-  console.log(tx);
+  console.log(tx)
   var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
   var from = obj.from
   var to = obj.to
@@ -400,10 +400,10 @@ function txDetails (e, tx, data, obj) {
       from,
       to,
       gas: data.tx.specification.Gas ? data.tx.specification.Gas : null,
-      input: "0x" + data.tx.specification.ContractData,
+      input: '0x' + data.tx.specification.ContractData,
       'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
       'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
-      logs: null, /*data.logs,*/
+      logs: null, /* data.logs, */
       val: data.tx.specification.ContractValue ? data.tx.specification.ContractValue : null,
       transactionCost: data.tx.outcome.fee ? data.tx.outcome.fee : null,
       // executionCost: data.tx.executionCost

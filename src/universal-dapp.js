@@ -213,10 +213,9 @@ UniversalDApp.prototype.getBalanceInEther = function (address, callback) {
     if (error) {
       callback(error)
     } else {
-      if(executionContext.isVM()) {
+      if (executionContext.isVM()) {
         callback(null, executionContext.web3().fromWei(balance, 'ether'))
-      }
-      else {
+      } else {
         callback(null, balance)
       }
     }
@@ -267,12 +266,11 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
           }
           if (lookupOnly) {
             let resultArray = new Array()
-            if(typeof(txResult) !== 'string' && txResult.hasOwnProperty(0)){
+            if (typeof (txResult) !== 'string' && txResult.hasOwnProperty(0)){
               for (let key in txResult) {
                 resultArray.push(txResult[key])
               }
-            }
-            else {
+            } else {
               resultArray.push(txResult)
             }
             var decoded = uiUtil.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : resultArray, args.funABI)
@@ -315,9 +313,9 @@ UniversalDApp.prototype.createContract = function (data, callback) {
   * @param {Function} callback    - callback.
   */
 UniversalDApp.prototype.callFunction = function (to, data, funAbi, callback) {
-  //console.log(funAbi)
-  //console.log(data)
-  //let funAbiName = funAbi.name + "(" + data.params + ")";
+  // console.log(funAbi)
+  // console.log(data)
+  // let funAbiName = funAbi.name + "(" + data.params + ")";
   data.funAbi = funAbi
   this.runTx({to: to, data: data, useCall: funAbi.constant, isDeploy: false}, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
@@ -383,24 +381,16 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       })
     },
     function getAccount (value, gasLimit, next) {
-      // if (executionContext.getProvider() === 'chainsql') {
-      //   const RootUser = {
-      //     secret: 'xnoPBzXtMeMyMHUVTgbuqAfg1SUTb',
-      //     address: 'zHb9CJAWyB4zj91VRWn96DkukG4bwdtyTh'
-      //   }
-      //   executionContext.chainsql().as(RootUser)
-
-      //   next(null, RootUser.address, value, gasLimit)
-      // }
-
-      // if (args.from) {
-      //   return next(null, args.from, value, gasLimit)
-      // }
-      // if (self.transactionContextAPI.getAddress) {
-      //   return self.transactionContextAPI.getAddress(function (err, address) {
-      //     next(err, address, value, gasLimit)
-      //   })
-      // }
+      if (args.from) {
+        executionContext.chainsql().as(self.chainsqlAccounts[args.from])
+        return next(null, args.from, value, gasLimit)
+      }
+      if (self.transactionContextAPI.getAddress) {
+        return self.transactionContextAPI.getAddress(function (err, address) {
+          executionContext.chainsql().as(self.chainsqlAccounts[address])
+          next(err, address, value, gasLimit)
+        })
+      }
       self.getAccounts(function (err, accounts) {
         let address = accounts[0]
 

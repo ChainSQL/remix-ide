@@ -376,9 +376,6 @@ function contractDropdown (events, self) {
   function createInstanceCallback (error, selectedContract, data) {
     if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
     self._deps.logCallback(`creation of ${selectedContract.name} pending...`)
-    // self._deps.logCallback(`${JSON.stringify(selectedContract)}`)
-    // self._deps.logCallback(`=========================`)
-    // self._deps.logCallback(`${JSON.stringify(data)}`)
     executionContext.initContractObj(false, selectedContract.name, selectedContract.contract.object.abi)
     self._deps.udapp.createContract(data, (error, txResult) => {
       console.log(txResult)
@@ -425,8 +422,10 @@ function contractDropdown (events, self) {
             createInstanceCallback(error, selectedContract, data)
           }, (msg) => {
             self._deps.logCallback(msg)
-          }, (data, runTxCallback) => {
+          }, (data, libAbi, runTxCallback) => {
+            executionContext.initContractObj(false, data.data.contractName, libAbi)
             // called for libraries deployment
+            data.isDeploy = true
             self._deps.udapp.runTx(data, runTxCallback)
           })
         } else {
