@@ -4,6 +4,7 @@ var Ethdebugger = require('chainsql-remix-debug').EthDebugger
 var remixLib = require('chainsql-remix-lib')
 var executionContext = require('../../execution-context')
 var globlalRegistry = require('../../global/registry')
+const debLog = require('../../lib/debuglogger')
 
 /**
  * Manage remix and source highlighting
@@ -57,7 +58,7 @@ function Debugger (container, sourceHighlighter, localRegistry) {
 
   executionContext.event.register('contextChanged', this, function (context) {
     // self.switchProvider(context)
-    console.log('comment temporary --LC')
+    debLog('comment temporary --LC')
   })
 
   this.debugger.event.register('newTraceLoaded', this, function () {

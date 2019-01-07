@@ -14,6 +14,7 @@ var executionContext = require('../../execution-context')
 var modalDialog = require('../ui/modal-dialog-custom')
 var typeConversion = remixLib.execution.typeConversion
 var globlalRegistry = require('../../global/registry')
+const debLog = require('../../lib/debuglogger')
 
 var css = csjs`
   .log {
@@ -148,7 +149,7 @@ class TxLogger {
 
     this.logKnownTX = this._deps.editorPanel.registerCommand('knownTransaction', (args, cmds, append) => {
       var data = args[0]
-      console.log('[logKnowTX]:', data)
+      debLog('[txLogger-logKnowTX]:', data)
       var el
       if (data.tx.isCall) {
         el = renderCall(this, data)
@@ -375,7 +376,7 @@ module.exports = TxLogger
 // helpers
 
 function txDetails (e, tx, data, obj) {
-  console.log(tx)
+  debLog('txLogger-txDetails tx:', tx)
   var table = document.querySelector(`#${tx.id} [class^="txTable"]`)
   var from = obj.from
   var to = obj.to

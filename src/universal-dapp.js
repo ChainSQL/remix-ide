@@ -20,6 +20,7 @@ var globalRegistry = require('./global/registry')
 var modalDialog = require('./app/ui/modaldialog')
 var typeConversion = remixLib.execution.typeConversion
 var confirmDialog = require('./app/execution/confirmDialog')
+const debLog = require('./lib/debuglogger')
 
 function UniversalDApp (opts, localRegistry) {
   this.event = new EventManager()
@@ -168,7 +169,6 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
       return cb('No accounts?')
     }
     if(executionContext.chainsql().api.isConnected()) {
-      console.log(address)
       executionContext.chainsql().api.getBalances(address).then(balanceObj => {
         for(let item of balanceObj) {
           if(item.currency === "ZXC") {
@@ -241,8 +241,8 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
     }
   }
   // contractsDetails is used to resolve libraries
-
-  console.log(value)
+  debLog('function call args:', args)
+  debLog('function call params:', value)
   txFormat.buildData(args.contractName, args.contractAbi, self.data.contractsDetails, false, args.funABI, value, (error, data) => {
     if (!error) {
       if (isUserAction) {
@@ -253,8 +253,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
         }
       }
       self.callFunction(args.address, data, args.funABI, (error, txResult) => {
-        console.log(error)
-        console.log(txResult)
+        debLog('function call ret:', txResult)
         if (!error) {
           var isVM = executionContext.isVM()
           if (isVM) {
@@ -313,9 +312,6 @@ UniversalDApp.prototype.createContract = function (data, callback) {
   * @param {Function} callback    - callback.
   */
 UniversalDApp.prototype.callFunction = function (to, data, funAbi, callback) {
-  // console.log(funAbi)
-  // console.log(data)
-  // let funAbiName = funAbi.name + "(" + data.params + ")";
   data.funAbi = funAbi
   this.runTx({to: to, data: data, useCall: funAbi.constant, isDeploy: false}, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
@@ -376,7 +372,6 @@ UniversalDApp.prototype.runTx = function (args, cb) {
         return next(null, 0, gasLimit)
       }
       self.transactionContextAPI.getValue(function (err, value) {
-        console.log(err)
         next(err, value, gasLimit)
       })
     },
@@ -399,8 +394,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
         if (executionContext.isVM() && !self.accounts[address]) {
           return next('Invalid account selected')
         }
-        console.log(address)
-        console.log(self.chainsqlAccounts)
+        debLog('all Accounts:', self.chainsqlAccounts)
         executionContext.chainsql().as(self.chainsqlAccounts[address])
         next(null, address, value, gasLimit)
       })
@@ -495,7 +489,7 @@ UniversalDApp.prototype.runTx = function (args, cb) {
         },
         function (error, result) {
           let eventName = (tx.useCall ? 'callExecuted' : 'transactionExecuted')
-          console.log('[In runTransaction], origin tx:', tx)
+          debLog('[In runTransaction], origin tx:', tx)
           self.event.trigger(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
 
           if (error && (typeof (error) !== 'string')) {

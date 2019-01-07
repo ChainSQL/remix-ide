@@ -6,6 +6,7 @@ var format = remixLib.execution.txFormat
 var txHelper = remixLib.execution.txHelper
 var async = require('async')
 var modal = require('./app/ui/modal-dialog-custom')
+const debLog = require('./lib/debuglogger')
 
 /**
   * Record transaction as long as the user create them.
@@ -65,7 +66,7 @@ class Recorder {
     })
 
     udapp.event.register('transactionExecuted', (error, from, to, data, call, txResult, timestamp) => {
-      console.log(txResult)
+      debLog('recorder-transactionExecuted-callback, txResult:', txResult)
       if (error) return console.log(error)
       if (call) return
 

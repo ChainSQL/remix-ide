@@ -18,6 +18,7 @@ var addTooltip = require('../ui/tooltip')
 var css = require('./styles/run-tab-styles')
 var MultiParamManager = require('../../multiParamManager')
 var modalDialog = require('../ui/modaldialog')
+const debLog = require('../../lib/debuglogger')
 
 function runTab (opts, localRegistry) {
   /* -------------------------
@@ -153,17 +154,13 @@ function fillAccountsList (container, self) {
       if (err) { addTooltip(`Cannot get account list: ${err}`) }
 
       for (var loadedaddress in loadedAccounts) {
-        //console.log(loadedaddress)
         if (accounts.indexOf(loadedaddress) === -1) {
-          //console.log('need rmove')
           txOrigin.removeChild(txOrigin.querySelector('option[value="' + loadedaddress + '"]'))
           delete loadedAccounts[loadedaddress]
         }
       }
-      //console.log('begin to add addr')
       for (var i in accounts) {
         var address = accounts[i]
-        //console.log(address)
         if (!loadedAccounts[address]) {
           txOrigin.appendChild(yo`<option value="${address}" >${address}</option>`)
           loadedAccounts[address] = 1
@@ -375,7 +372,7 @@ function contractDropdown (events, self) {
     self._deps.logCallback(`creation of ${selectedContract.name} pending...`)
     executionContext.initContractObj(false, selectedContract.name, selectedContract.contract.object.abi)
     self._deps.udapp.createContract(data, (error, txResult) => {
-      console.log(txResult)
+      debLog('createContract ret:',txResult)
       if (!error) {
         var isVM = executionContext.isVM()
         if (isVM) {
@@ -414,7 +411,7 @@ function contractDropdown (events, self) {
       self._deps.filePanel.compilerMetadata().metadataOf(selectedContract.name, (error, contractMetadata) => {
         if (error) return self._deps.logCallback(`creation of ${selectedContract.name} errored: ` + error)
         if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
-          console.log('autoDeployLib')
+          debLog('autoDeployLib, args:', args)
           txFormat.buildData(selectedContract.name, selectedContract.contract.object, self._deps.compiler.getContracts(), true, constructor, args, (error, data) => {
             createInstanceCallback(error, selectedContract, data)
           }, (msg) => {
@@ -426,7 +423,7 @@ function contractDropdown (events, self) {
             self._deps.udapp.runTx(data, runTxCallback)
           })
         } else {
-          console.log('no-autoDeployLib')
+          debLog('no-autoDeployLib')
           if (Object.keys(selectedContract.contract.object.evm.bytecode.linkReferences).length) self._deps.logCallback(`linking ${JSON.stringify(selectedContract.contract.object.evm.bytecode.linkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
           txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.contract.object, args, constructor, contractMetadata.linkReferences, selectedContract.contract.object.evm.bytecode.linkReferences, (error, data) => {
             if (data) data.contractName = selectedContract.name
@@ -620,9 +617,9 @@ function settings (container, self) {
   })
 
   selectExEnv.addEventListener('change', function (event) {
-    console.log('environment changed llc')
+    debLog('environment changed llc')
     let context = selectExEnv.options[selectExEnv.selectedIndex].value
-    console.log('context:' + context)
+    debLog('context:' + context)
     executionContext.executionContextChange(context, null, () => {
       modalDialogCustom.confirm(null, 'Are you sure you want to connect to a ChainSQL node?', () => {
         modalDialogCustom.prompt(null, 'ChainSQL Websocket Address', 'ws://localhost:5215', (target) => {
