@@ -407,8 +407,8 @@ UniversalDApp.prototype.runTx = function (args, cb) {
     },
     function runTransaction (fromAddress, value, gasLimit, next) {
       let funAbi = {}
-      funAbi.funAbiName = args.data.funAbi.name
-      funAbi.funAbiParams = args.data.params
+      funAbi.funAbiObj = args.data.funAbi
+      funAbi.funAbiParams = args.data.funArgs
       var tx = { to: args.to, data: args.data.dataHex, useCall: args.useCall, isDeploy: args.isDeploy, contractName: args.data.contractName, funAbi: funAbi, from: fromAddress, value: value, gasLimit: gasLimit }
       var payLoad = { funAbi: args.data.funAbi, funArgs: args.data.funArgs, contractBytecode: args.data.contractBytecode, contractName: args.data.contractName }
       var timestamp = Date.now()
