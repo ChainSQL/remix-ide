@@ -475,17 +475,35 @@ function contractDropdown (events, self) {
         instanceContainer.appendChild(self._deps.udappUI.renderInstanceFromABI(abi, address, address))
       })
     } else {
-      self._deps.udapp.getAccounts((err, accounts) => {
-        if (err) { addTooltip(`Cannot get account list: ${err}`) }
-        let asAddress = accounts[0]
-        console.log(asAddress)
-        if(!asAddress) return modalDialogCustom.alert('No accounts available.')
-        executionContext.chainsql().as(self._deps.udapp.chainsqlAccounts[asAddress])
-        var contract = self._deps.compiler.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
-        executionContext.initContractObj(true, selectContractNames.value, contract.object.abi, address)
-        instanceContainer.appendChild(self._deps.udappUI.renderInstance(contract.object, address, selectContractNames.value))
-      })
+      let data = {}
+      data.ctraddr = address
+      if (self._components.transactionContextAPI.getAddress) {
+        self._components.transactionContextAPI.getAddress(function (err, account) {
+          data.addr = account
+          data.contractNames = contractNames
+          loadFromAddressCallBack(err, data)
+        })
+      } else {
+        self._deps.udapp.getAccounts((err, accounts) => {
+          data.addr = accounts[0]
+          data.contractNames = contractNames
+          loadFromAddressCallBack(err, data)
+        })
+      }
     }
+  }
+
+  function loadFromAddressCallBack(err, data) {
+    if (err) { addTooltip(`Cannot get account list: ${err}`) }
+    debLog('loadCtr asAddr:', data.addr)
+    let ctraddr = data.ctraddr
+    let addr = data.addr
+    let contractNames = data.contractNames
+    if(!addr) return modalDialogCustom.alert('No accounts available.')
+    executionContext.chainsql().as(self._deps.udapp.chainsqlAccounts[addr])
+    var contract = self._deps.compiler.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
+    executionContext.initContractObj(true, selectContractNames.value, contract.object.abi, ctraddr)
+    instanceContainer.appendChild(self._deps.udappUI.renderInstance(contract.object, ctraddr, selectContractNames.value))
   }
 
   // GET NAMES OF ALL THE CONTRACTS
