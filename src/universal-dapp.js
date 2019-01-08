@@ -265,12 +265,13 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
           }
           if (lookupOnly) {
             let resultArray = new Array()
-            if (typeof (txResult) !== 'string' && txResult.hasOwnProperty(0)){
-              for (let key in txResult) {
-                resultArray.push(txResult[key])
+            let callResult = txResult.result
+            if (typeof (callResult) !== 'string' && callResult.hasOwnProperty(0)){
+              for (let key in callResult) {
+                resultArray.push(callResult[key])
               }
             } else {
-              resultArray.push(txResult)
+              resultArray.push(callResult)
             }
             var decoded = uiUtil.decodeResponseToTreeView(executionContext.isVM() ? txResult.result.vm.return : resultArray, args.funABI)
             outputCb(decoded)
