@@ -93,9 +93,12 @@ UniversalDApp.prototype.createVMAccount = function (privateKey, balance, cb) {
 UniversalDApp.prototype.newAccount = function (password, cb) {
   if (!executionContext.isVM()) {
     if (!this._deps.config.get('settings/personal-mode')) {
-      return cb('Not running in personal mode')
+      let errMsg = 'Not running in personal mode, please chech Settings->Enable Personal Mode'
+      modalCustom.alert(errMsg)
+      return cb(errMsg)
     }
     modalCustom.promptAddAccount((error, inputAccount) => {
+      let errMsg = ''
       try {
         let accountBySecret = executionContext.chainsql().generateAddress(inputAccount.secret)
         if (inputAccount.address === accountBySecret.address) {
@@ -103,12 +106,13 @@ UniversalDApp.prototype.newAccount = function (password, cb) {
           cb(null, inputAccount.address)
         }
         else {
-          let errMsg = 'the secret and address can not match, please check'
+          errMsg = 'the secret and address can not match, please check'
           modalCustom.alert(errMsg)
           cb(errMsg, null)
         }
       } catch (error) {
-        modalCustom.alert(error)
+        errMsg = 'check input value failed, please check : [ ' + error + ' ]'
+        modalCustom.alert(errMsg)
         cb(error, null)
       }
     }, () => {})
