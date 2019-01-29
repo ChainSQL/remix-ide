@@ -340,7 +340,7 @@ function filepanel (localRegistry) {
         if (!tokenAccess) {
           modalDialogCustom.alert('Remix requires an access token (which includes gists creation permission). Please go to the settings tab for more information.')
         } else {
-          var description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
+          var description = 'Created using remix-ide: Realtime ChainSQL Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at http://remix.chainsql.net/#version=' + queryParams.get().version + '&optimize=' + queryParams.get().optimize + '&gist='
           var gists = new Gists({
             token: tokenAccess
           })
@@ -386,7 +386,7 @@ function filepanel (localRegistry) {
   // ------------------ copy files --------------
 
   function copyFiles () {
-    modalDialogCustom.prompt(null, 'To which other remix-ide instance do you want to copy over all files?', 'https://remix.ethereum.org', (target) => {
+    modalDialogCustom.prompt(null, 'To which other remix-ide instance do you want to copy over all files?', 'http://remix.chainsql.net', (target) => {
       doCopy(target)
     })
     function doCopy (target) {

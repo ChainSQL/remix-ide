@@ -176,16 +176,16 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
       executionContext.chainsql().api.getBalances(address).then(balanceObj => {
         for(let item of balanceObj) {
           if(item.currency === "ZXC") {
-            cb(null, item.value)
+            return cb(null, item.value)
           }
         }
-        cb("can't get balance")
+        cb('notFoundZXC')
       }).catch(error => {
-        cb(error, null)
+        cb(error.message, null)
       })
     }
     else {
-      cb('have not connected to chainsql')
+      cb('disconnected')
     }
     // executionContext.web3().eth.getBalance(address, function (err, res) {
     //   if (err) {
@@ -211,7 +211,7 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
   }
 }
 
-UniversalDApp.prototype.getBalanceInEther = function (address, callback) {
+UniversalDApp.prototype.getBalanceInZXC = function (address, callback) {
   var self = this
   self.getBalance(address, (error, balance) => {
     if (error) {

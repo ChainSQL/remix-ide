@@ -175,9 +175,11 @@ function updateAccountBalances (container, self) {
   var accounts = $(container.querySelector('#txorigin')).children('option')
   accounts.each(function (index, value) {
     (function (acc) {
-      self._deps.udapp.getBalanceInEther(accounts[acc].value, function (err, res) {
+      self._deps.udapp.getBalanceInZXC(accounts[acc].value, function (err, res) {
         if (!err) {
           accounts[acc].innerText = helper.shortenAddress(accounts[acc].value, res, executionContext.isVM())
+        } else {
+          accounts[acc].innerText = helper.shortenAddress(accounts[acc].value, err, executionContext.isVM(), true)
         }
       })
     })(index)
@@ -640,7 +642,7 @@ function settings (container, self) {
     debLog('context:' + context)
     executionContext.executionContextChange(context, null, () => {
       modalDialogCustom.confirm(null, 'Are you sure you want to connect to a ChainSQL node?', () => {
-        modalDialogCustom.prompt(null, 'ChainSQL Websocket Address', 'ws://localhost:5215', (target) => {
+        modalDialogCustom.prompt(null, 'ChainSQL Websocket Address', 'ws://localhost:6006', (target) => {
           executionContext.setProviderFromEndpoint(target, context, (alertMsg) => {
             if (alertMsg) {
               modalDialogCustom.alert(alertMsg)
@@ -669,7 +671,7 @@ function settings (container, self) {
   }, 10000)
 
   function newNode () {
-    modalDialogCustom.prompt(null, 'ChainSQL Websocket Address', 'ws://localhost:5215', (target) => {
+    modalDialogCustom.prompt(null, 'ChainSQL Websocket Address', 'ws://localhost:6006', (target) => {
       executionContext.setProviderFromEndpoint(target, 'chainsql', (isSuccess, promptMsg) => {
         if (isSuccess) {
           fillNodeList(target)
