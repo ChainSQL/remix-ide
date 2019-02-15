@@ -629,6 +629,7 @@ function settings (container, self) {
   }
 
   self.event.register('clearInstance', () => {
+    executionContext.contractObjs = {}
     var instanceContainer = self._view.instanceContainer
     var instanceContainerTitle = self._view.instanceContainerTitle
     instanceContainer.innerHTML = '' // clear the instances list
@@ -638,9 +639,9 @@ function settings (container, self) {
 
   selectExEnv.addEventListener('change', function (event) {
     debLog('environment changed llc')
-    let context = selectExEnv.options[selectExEnv.selectedIndex].value
-    debLog('context:' + context)
-    executionContext.executionContextChange(context, null, () => {
+    let nodeWSAddr = 'ws://' + selectExEnv.options[selectExEnv.selectedIndex].value
+    debLog('nodeWSAddr:' + nodeWSAddr)
+    executionContext.executionContextChange('chainsql', nodeWSAddr, () => {
       modalDialogCustom.confirm(null, 'Are you sure you want to connect to a ChainSQL node?', () => {
         modalDialogCustom.prompt(null, 'ChainSQL Websocket Address', 'ws://localhost:6006', (target) => {
           executionContext.setProviderFromEndpoint(target, context, (alertMsg) => {

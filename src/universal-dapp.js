@@ -309,6 +309,19 @@ UniversalDApp.prototype.createContract = function (data, callback) {
 }
 
 /**
+  * delete the contract from contractObjs
+  *
+  * @param {String} ctrName    - name of contract.
+  * @param {String} ctrAddr    - address of contract.
+  */
+ UniversalDApp.prototype.deleteContract = function (ctrName, ctrAddr) {
+  console.log("deleteCtr,ctrName:",ctrName)
+  console.log("deleteCtr,ctrAddr:",ctrAddr) 
+  let contractId = executionContext.currentChainsqlWS + ctrName + ctrAddr
+  delete executionContext.contractObjs[contractId]
+}
+
+/**
   * call the current given contract
   *
   * @param {String} to    - address of the contract to call.
@@ -387,7 +400,12 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       }
       if (self.transactionContextAPI.getAddress) {
         return self.transactionContextAPI.getAddress(function (err, address) {
-          executionContext.chainsql().as(self.chainsqlAccounts[address])
+          if(address === null) {
+            err = "can not find address"
+          }
+          else {
+            executionContext.chainsql().as(self.chainsqlAccounts[address])
+          }
           next(err, address, value, gasLimit)
         })
       }
