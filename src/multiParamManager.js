@@ -122,7 +122,7 @@ class MultiParamManager {
     this.basicInputField.setAttribute('title', this.inputs)
 
     var onClick = (domEl) => {
-      debLog("[In onClick], this.basicInputField.value:", this.basicInputField.value)
+      debLog('[In onClick], this.basicInputField.value:', this.basicInputField.value)
       this.clickCallBack(this.funABI.inputs, this.basicInputField.value)
     }
 
@@ -134,7 +134,7 @@ class MultiParamManager {
 
     var multiOnClick = () => {
       var valsString = this.getMultiValsString()
-      debLog("[In multiOnClick], valsString:", valsString)
+      debLog('[In multiOnClick], valsString:', valsString)
       if (valsString) {
         this.clickCallBack(this.funABI.inputs, valsString)
       } else {

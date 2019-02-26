@@ -374,7 +374,7 @@ function contractDropdown (events, self) {
     self._deps.logCallback(`creation of ${selectedContract.name} pending...`)
     executionContext.initContractObj(false, selectedContract.name, selectedContract.contract.object.abi)
     self._deps.udapp.createContract(data, (error, txResult) => {
-      debLog('createContract ret:',txResult)
+      debLog('createContract ret:', txResult)
       if (!error) {
         var isVM = executionContext.isVM()
         if (isVM) {
@@ -384,7 +384,7 @@ function contractDropdown (events, self) {
             return
           }
         }
-        //if (txResult.result.status && txResult.result.status === '0x0') {
+        // if (txResult.result.status && txResult.result.status === '0x0') {
         if (txResult.status && txResult.status !== 'validate_success') {
           self._deps.logCallback(`creation of ${selectedContract.name} errored: transaction execution failed`)
           return
@@ -495,13 +495,13 @@ function contractDropdown (events, self) {
     }
   }
 
-  function loadFromAddressCallBack(err, data) {
+  function loadFromAddressCallBack (err, data) {
     if (err) { addTooltip(`Cannot get account list: ${err}`) }
     debLog('loadCtr asAddr:', data.addr)
     let ctraddr = data.ctraddr
     let addr = data.addr
     let contractNames = data.contractNames
-    if(!addr) return modalDialogCustom.alert('No accounts available.')
+    if (!addr) return modalDialogCustom.alert('No accounts available.')
     executionContext.chainsql().as(self._deps.udapp.chainsqlAccounts[addr])
     var contract = self._deps.compiler.getContract(contractNames.children[contractNames.selectedIndex].innerHTML)
     executionContext.initContractObj(true, selectContractNames.value, contract.object.abi, ctraddr)
@@ -622,7 +622,7 @@ function settings (container, self) {
 
   function setFinalContext () {
     // set the final context. Cause it is possible that this is not the one we've originaly selected
-    //selectExEnv.value = executionContext.getProvider()
+    // selectExEnv.value = executionContext.getProvider()
     self.event.trigger('clearInstance', [])
     updateNetwork()
     fillAccountsList(el, self)
@@ -640,8 +640,9 @@ function settings (container, self) {
   selectExEnv.addEventListener('change', function (event) {
     debLog('environment changed llc')
     let nodeWSAddr = 'ws://' + selectExEnv.options[selectExEnv.selectedIndex].value
+    let context = 'chainsql';
     debLog('nodeWSAddr:' + nodeWSAddr)
-    executionContext.executionContextChange('chainsql', nodeWSAddr, () => {
+    executionContext.executionContextChange(context, nodeWSAddr, () => {
       modalDialogCustom.confirm(null, 'Are you sure you want to connect to a ChainSQL node?', () => {
         modalDialogCustom.prompt(null, 'ChainSQL Websocket Address', 'ws://localhost:6006', (target) => {
           executionContext.setProviderFromEndpoint(target, context, (alertMsg) => {

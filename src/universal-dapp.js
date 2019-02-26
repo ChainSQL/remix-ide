@@ -104,8 +104,7 @@ UniversalDApp.prototype.newAccount = function (password, cb) {
         if (inputAccount.address === accountBySecret.address) {
           this.chainsqlAccounts[inputAccount.address] = inputAccount
           cb(null, inputAccount.address)
-        }
-        else {
+        } else {
           errMsg = 'the secret and address can not match, please check'
           modalCustom.alert(errMsg)
           cb(errMsg, null)
@@ -172,10 +171,10 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
     if (JSON.stringify(self.chainsqlAccounts) === '{}') {
       return cb('No accounts?')
     }
-    if(executionContext.chainsql().api.isConnected()) {
+    if (executionContext.chainsql().api.isConnected()) {
       executionContext.chainsql().api.getBalances(address).then(balanceObj => {
-        for(let item of balanceObj) {
-          if(item.currency === "ZXC") {
+        for (let item of balanceObj) {
+          if (item.currency === 'ZXC') {
             return cb(null, item.value)
           }
         }
@@ -183,8 +182,7 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
       }).catch(error => {
         cb(error.message, null)
       })
-    }
-    else {
+    } else {
       cb('disconnected')
     }
     // executionContext.web3().eth.getBalance(address, function (err, res) {
@@ -194,7 +192,7 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
     //     cb(null, res.toString(10))
     //   }
     // })
-    //return cb('No accounts?')
+    // return cb('No accounts?')
   } else {
     address = ethJSUtil.stripHexPrefix(address)
     if (!self.accounts) {
@@ -270,7 +268,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
           if (lookupOnly) {
             let resultArray = new Array()
             let callResult = txResult.result
-            if (typeof (callResult) !== 'string' && callResult.hasOwnProperty(0)){
+            if (typeof (callResult) !== 'string' && callResult.hasOwnProperty(0)) {
               for (let key in callResult) {
                 resultArray.push(callResult[key])
               }
@@ -400,10 +398,9 @@ UniversalDApp.prototype.runTx = function (args, cb) {
       }
       if (self.transactionContextAPI.getAddress) {
         return self.transactionContextAPI.getAddress(function (err, address) {
-          if(address === null) {
-            err = "can not find address"
-          }
-          else {
+          if (address === null) {
+            err = 'can not find address'
+          } else {
             executionContext.chainsql().as(self.chainsqlAccounts[address])
           }
           next(err, address, value, gasLimit)

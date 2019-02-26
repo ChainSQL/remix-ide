@@ -3,11 +3,10 @@ var async = require('async')
 module.exports = {
   shortenAddress: function (address, balance, isVM, isErr = false) {
     var len = address.length
-    if(isVM) {
+    if (isVM) {
       return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (balance ? ' (' + balance.toString() + ' ether)' : '')
-    }
-    else {
-      return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (balance ? ' (' + balance.toString() + (isErr? ' )' : ' zxc)') : '')
+    } else {
+      return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (balance ? ' (' + balance.toString() + (isErr ? ' )' : ' zxc)') : '')
     }
   },
   shortenHexData: function (data) {

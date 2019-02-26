@@ -1,7 +1,7 @@
 'use strict'
 
-function disableDebugLog(){
-    return;
+function disableDebugLog () {
+    return
 }
 var enableDebugLog = console.log
 
