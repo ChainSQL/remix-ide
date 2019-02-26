@@ -93,7 +93,7 @@ UniversalDApp.prototype.createVMAccount = function (privateKey, balance, cb) {
 UniversalDApp.prototype.newAccount = function (password, cb) {
   if (!executionContext.isVM()) {
     if (!this._deps.config.get('settings/personal-mode')) {
-      let errMsg = 'Not running in personal mode, please chech Settings->Enable Personal Mode'
+      let errMsg = 'Not running in personal mode, please check Settings->Enable Personal Mode'
       modalCustom.alert(errMsg)
       return cb(errMsg)
     }
