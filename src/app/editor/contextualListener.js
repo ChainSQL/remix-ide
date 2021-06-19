@@ -95,9 +95,9 @@ class ContextualListener {
         self._index['FlatReferences'][node.id] = node
         return true
       }
-      for (var s in compilationResult.sources) {
-        this.astWalker.walk(compilationResult.sources[s].legacyAST, callback)
-      }
+    //   for (var s in compilationResult.sources) {
+    //     this.astWalker.walk(compilationResult.sources[s].legacyAST, callback)
+    //   }
     }
   }
 

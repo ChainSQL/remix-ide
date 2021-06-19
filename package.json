@@ -43,7 +43,7 @@
     "chainsql-remix-lib": "latest",
     "chainsql-remix-solidity": "latest",
     "chainsql-remix-tests": "latest",
-    "remixd": "git+https://github.com/ethereum/remixd.git",
+    "remixd": "0.1.8-alpha.7",
     "request": "^2.83.0",
     "rimraf": "^2.6.1",
     "selenium-standalone": "^6.0.1",
@@ -60,11 +60,11 @@
   },
   "dependencies": {
     "http-server": "0.9.0",
-    "remixd": "git+https://github.com/ethereum/remixd.git"
+    "remixd": "0.1.8-alpha.7"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ethereum/remix-ide.git"
+    "url": "git+https://github.com/ChainSQL/remix-ide.git"
   },
   "keywords": [
     "chainsql",

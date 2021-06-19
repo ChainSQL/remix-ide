@@ -236,7 +236,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
   const self = this
   var logMsg
   if (isUserAction) {
-    if (!args.funABI.constant) {
+    if (!(args.funABI.stateMutability == "view" || args.funABI.stateMutability == "pure")) {
       logMsg = `transact to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
     } else {
       logMsg = `call to ${args.contractName}.${(args.funABI.name) ? args.funABI.name : '(fallback)'}`
@@ -248,7 +248,7 @@ UniversalDApp.prototype.call = function (isUserAction, args, value, lookupOnly, 
   txFormat.buildData(args.contractName, args.contractAbi, self.data.contractsDetails, false, args.funABI, value, (error, data) => {
     if (!error) {
       if (isUserAction) {
-        if (!args.funABI.constant) {
+        if (!(args.funABI.stateMutability == "view" || args.funABI.stateMutability == "pure")) {
           self._deps.logCallback(`${logMsg} pending ... `)
         } else {
           self._deps.logCallback(`${logMsg}`)
@@ -329,7 +329,8 @@ UniversalDApp.prototype.createContract = function (data, callback) {
   */
 UniversalDApp.prototype.callFunction = function (to, data, funAbi, callback) {
   data.funAbi = funAbi
-  this.runTx({to: to, data: data, useCall: funAbi.constant, isDeploy: false}, (error, txResult) => {
+  let isCall = (funAbi.stateMutability == "view" || funAbi.stateMutability == "pure");
+  this.runTx({to: to, data: data, useCall: isCall, isDeploy: false}, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     callback(error, txResult)
   })

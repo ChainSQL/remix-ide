@@ -88,7 +88,8 @@ UniversalDAppUI.prototype.getCallButton = function (args) {
   var self = this
   // args.funABI, args.address [fun only]
   // args.contractName [constr only]
-  var lookupOnly = args.funABI.constant
+//   var lookupOnly = args.funABI.constant
+  var lookupOnly = (args.funABI.stateMutability == "view" || args.funABI.stateMutability == "pure")
 
   var outputOverride = yo`<div class=${css.value}></div>` // show return value
 
