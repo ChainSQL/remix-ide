@@ -426,7 +426,8 @@ module.exports = class CompileTab {
       self._deps.compiler.loadVersion(true, url)
       self.setVersionText('(loading using worker)')
     } else {
-      self._deps.compiler.loadVersion(false, url)
+    //   self._deps.compiler.loadVersion(false, url)
+      self._deps.compiler.loadVersion(true, url)
       self.setVersionText('(loading)')
     }
   }
