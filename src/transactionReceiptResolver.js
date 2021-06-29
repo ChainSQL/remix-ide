@@ -6,14 +6,19 @@ module.exports = class TransactionReceiptResolver {
     this._transactionReceipts = {}
   }
 
-  resolve (tx, cb) {
-    if (this._transactionReceipts[tx.hash]) {
-      return cb(null, this._transactionReceipts[tx.hash])
+  resolve (tx, resolvedTransaction, cb) {
+    if (tx.isCall) return cb(null, "")
+
+    if (this._transactionReceipts[tx.id]) {
+      return cb(null, this._transactionReceipts[tx.id])
     }
-    executionContext.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
+    let ctrAddr = resolvedTransaction.hasOwnProperty("contractAddress") ? resolvedTransaction.contractAddress : resolvedTransaction.to
+    let contractId = executionContext.currentChainsqlWS + resolvedTransaction.contractName + ctrAddr
+    let currentTxCtrObj = executionContext.contractObjs[contractId]
+    currentTxCtrObj.getPastEvent({txHash:tx.id}, (error, receipt) => {
       if (!error) {
-        this._transactionReceipts[tx.hash] = receipt
-        cb(null, receipt)
+        this._transactionReceipts[tx.id] = receipt.ContractLogs
+        cb(null, receipt.ContractLogs)
       } else {
         cb(error)
       }

@@ -426,8 +426,8 @@ function run () {
 
   var eventsDecoder = new EventsDecoder({
     api: {
-      resolveReceipt: function (tx, cb) {
-        transactionReceiptResolver.resolve(tx, cb)
+      resolveReceipt: function (tx, resolvedTransaction, cb) {
+        transactionReceiptResolver.resolve(tx, resolvedTransaction, cb)
       }
     }
   })

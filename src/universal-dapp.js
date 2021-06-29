@@ -329,7 +329,7 @@ UniversalDApp.prototype.createContract = function (data, callback) {
   */
 UniversalDApp.prototype.callFunction = function (to, data, funAbi, callback) {
   data.funAbi = funAbi
-  let isCall = (funAbi.stateMutability == "view" || funAbi.stateMutability == "pure");
+  let isCall = (funAbi.stateMutability == "view" || funAbi.stateMutability == "pure")
   this.runTx({to: to, data: data, useCall: isCall, isDeploy: false}, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     callback(error, txResult)

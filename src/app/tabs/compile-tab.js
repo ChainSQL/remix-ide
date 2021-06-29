@@ -418,18 +418,19 @@ module.exports = class CompileTab {
       }
       url = `${self.data.baseurl}/${self.data.selectedVersion}`
     }
-    var isFirefox = typeof InstallTrigger !== 'undefined'
-    if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
-      // Workers cannot load js on "file:"-URLs and we get a
-      // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
-      // resort to non-worker version in that case.
-      self._deps.compiler.loadVersion(true, url)
-      self.setVersionText('(loading using worker)')
-    } else {
+    self._deps.compiler.loadVersion(true, url)
+    self.setVersionText('(loading using worker)')
+    // var isFirefox = typeof InstallTrigger !== 'undefined'
+    // if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
+    //   // Workers cannot load js on "file:"-URLs and we get a
+    //   // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
+    //   // resort to non-worker version in that case.
+    //   self._deps.compiler.loadVersion(true, url)
+    //   self.setVersionText('(loading using worker)')
+    // } else {
     //   self._deps.compiler.loadVersion(false, url)
-      self._deps.compiler.loadVersion(true, url)
-      self.setVersionText('(loading)')
-    }
+    //   self.setVersionText('(loading)')
+    // }
   }
   fetchAllVersion (callback) {
     var self = this

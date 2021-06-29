@@ -221,7 +221,8 @@ function log (self, tx, receipt) {
     if (self._deps.compiler.lastCompilationResult && self._deps.compiler.lastCompilationResult.data) {
       compiledContracts = self._deps.compiler.lastCompilationResult.data.contracts
     }
-    self._deps.eventsDecoder.parseLogs(tx, resolvedTransaction.contractName, compiledContracts, (error, logs) => {
+    
+    self._deps.eventsDecoder._api.resolveReceipt(tx, resolvedTransaction, (error, logs) => {
       if (!error) {
         self.logKnownTX({ tx: tx, receipt: receipt, resolvedData: resolvedTransaction, logs: logs })
       }
@@ -404,7 +405,7 @@ function txDetails (e, tx, data, obj) {
       input: '0x' + data.tx.specification.ContractData,
       'decoded input': data.resolvedData && data.resolvedData.params ? JSON.stringify(typeConversion.stringify(data.resolvedData.params), null, '\t') : ' - ',
       'decoded output': data.resolvedData && data.resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(data.resolvedData.decodedReturnValue), null, '\t') : ' - ',
-      logs: null, /* data.logs, */
+      logs: data.logs,
       val: data.tx.specification.ContractValue ? data.tx.specification.ContractValue : null,
       transactionCost: data.tx.outcome.fee ? data.tx.outcome.fee : null,
       // executionCost: data.tx.executionCost
@@ -558,20 +559,21 @@ function createTable (opts) {
     table.appendChild(outputDecoded)
   }
 
-  var stringified = ' - '
-  if (opts.logs && opts.logs.decoded) {
-    stringified = typeConversion.stringify(opts.logs.decoded)
-  }
+//   var stringified = ' - '
+//   if (opts.logs && opts.logs.decoded) {
+//     stringified = typeConversion.stringify(opts.logs.decoded)
+//   }
   var logs = yo`
     <tr class="${css.tr}">
       <td class="${css.td}"> logs </td>
       <td class="${css.td}" id="logs">
-        ${JSON.stringify(stringified, null, '\t')}
-        ${copyToClipboard(() => JSON.stringify(stringified, null, '\t'))}
-        ${copyToClipboard(() => JSON.stringify(opts.logs.raw || '0'))}
+        ${JSON.stringify(opts.logs, null, '\t')}
+        ${copyToClipboard(() => JSON.stringify(opts.logs, null, '\t'))}
       </td>
     </tr>
   `
+//   ${copyToClipboard(() => JSON.stringify(stringified, null, '\t'))}
+//   ${copyToClipboard(() => JSON.stringify(opts.logs.raw || '0'))}
   if (opts.logs) table.appendChild(logs)
 
   var val = opts.val != null ? typeConversion.toInt(opts.val) : 0
