@@ -228,7 +228,7 @@ pragma solidity ^0.8.0;
 contract DBTest {
     /*
     * @param tableName eg: "test1"
-    * @param raw eg: "[{'field':'id', 'type' : 'int', 'length' : 11, 'PK' : 1, 'NN' : 1, 'UQ' : 1}, { 'field':'account', 'type' : 'varchar' }, { 'field':'age', 'type' : 'int' }]"
+    * @param raw eg: "[{\\"field\\":\\"id\\", \\"type\\" : \\"int\\", \\"length\\" : 11, \\"PK\\" : 1, \\"NN\\" : 1, \\"UQ\\" : 1}, { \\"field\\":\\"account\\", \\"type\\" : \\"varchar\\" }, { \\"field\\":\\"age\\", \\"type\\" : \\"int\\" }]"
     */
 	function create(string calldata tableName, string calldata raw) public{
 		msg.sender.create(tableName, raw);
@@ -241,9 +241,9 @@ contract DBTest {
 	}
 	
 	/*
-	* @param owner table's owner'
+	* @param owner table's owner
 	* @param tableName eg: "test1"
-	* @param raw eg: "[{'account':'zU42yDW3fzFjGWosdeVjVasyPsF4YHj224', 'id':0}, {'account':'zU42yDW3fzFjGWosdeVjVasyPsF4YHj224',   'id':1}, {'account':'zU42yDW3fzFjGWosdeVjVasyPsF4YHj224', 'id':2}]"
+	* @param raw eg: "[{\\"account\\":\\"zU42yDW3fzFjGWosdeVjVasyPsF4YHj224\\", \\"id\\":0}, {\\"account\\":\\"zU42yDW3fzFjGWosdeVjVasyPsF4YHj224\\",   \\"id\\":1}, {\\"account\\":\\"zU42yDW3fzFjGWosdeVjVasyPsF4YHj224\\", \\"id\\":2}]"
 	*/
 	function insert(address owner, string calldata tableName, string calldata raw) public{
 	    owner.insert(tableName, raw);
@@ -251,16 +251,16 @@ contract DBTest {
 	
 	/*
 	* @param tableName eg: "test1"
-	* @param raw eg: "[{'account':'zU42yDW3fzFjGWosdeVjVasyPsF4YHj224', 'id':0}, {'account':'zU42yDW3fzFjGWosdeVjVasyPsF4YHj224',   'id':1}, {'account':'zU42yDW3fzFjGWosdeVjVasyPsF4YHj224', 'id':2}]"
+	* @param raw eg: "[{\\"account\\":\\"zU42yDW3fzFjGWosdeVjVasyPsF4YHj224\\", \\"id\\":0}, {\\"account\\":\\"zU42yDW3fzFjGWosdeVjVasyPsF4YHj224\\",   \\"id\\":1}, {\\"account\\":\\"zU42yDW3fzFjGWosdeVjVasyPsF4YHj224\\", \\"id\\":2}]"
 	*/
 	function insert(string calldata tableName, string calldata raw) public {
 	    msg.sender.insert(tableName, raw);
 	}
 	
 	/*
-	* @param owner table's owner'
+	* @param owner table's owner
 	* @param tableName "test1"
-	* @param raw eg: "{'id':1}"
+	* @param raw eg: "{\\"id\\":1}"
 	*/
 	function deletex(address owner, string calldata tableName, string calldata raw) public {
 	    owner.deletex(tableName, raw);
@@ -268,17 +268,17 @@ contract DBTest {
 	
 	/*
 	* @param tableName "test1"
-	* @param raw eg: "{'id':1}"
+	* @param raw eg: "{\\"id\\":1}"
 	*/
 	function deletex(string calldata tableName, string calldata raw) public {
 	    msg.sender.deletex(tableName, raw);
 	}
 	
 	/*
-	* @param owner table's owner'
+	* @param owner table's owner
 	* @param tableName eg: "test1"
-	* @param rawUpdate eg: "{'age':15}"
-	* @param rawGet eg: "{'id': 2}"
+	* @param rawUpdate eg: "{\\"age\\":15}"
+	* @param rawGet eg: "{\\"id\\": 2}"
 	*/
 	function update(address owner, string calldata tableName, string calldata rawUpdate, string calldata rawGet) public{
 	    owner.update(tableName, rawUpdate, rawGet);
@@ -286,8 +286,8 @@ contract DBTest {
 	
 	/*
 	* @param tableName eg: "test1"
-	* @param rawUpdate eg: "{'age':15}"
-	* @param rawGet eg: "{'id': 2}"
+	* @param rawUpdate eg: "{\\"age\\":15}"
+	* @param rawGet eg: "{\\"id\\": 2}"
 	*/
 	function update(string calldata tableName, string calldata rawUpdate, string calldata rawGet) public{
 	    msg.sender.update(tableName, rawUpdate, rawGet);
@@ -304,7 +304,7 @@ contract DBTest {
 	/*
 	* @param toWho ethereum address to be granted. need convert chainsql addr 2 ethereum addr .eg:  "0xzzzzzzzzzzzzzzzzzzzzBZbvji"
 	* @param tableName eg: "test1"
-	* @param raw eg: "{'insert':false, 'delete':false}"
+	* @param raw eg: "{\\"insert\\":false, \\"delete\\":false}"
 	*/
 	function grant(address toWho, string calldata tableName, string calldata raw) public{
 	    return msg.sender.grant(toWho, tableName, raw);
@@ -312,15 +312,15 @@ contract DBTest {
 	
 	function sqlTransaction(string calldata tableName) public{
 	    db.beginTrans();
-	    msg.sender.create(tableName, "[{'field':'id', 'type' : 'int', 'length' : 11, 'PK' : 1, 'NN' : 1, 'UQ' : 1}, { 'field':'account', 'type' : 'varchar' }, { 'field':'age', 'type' : 'int' }]");
-        msg.sender.insert(tableName, "[{'account':'zU42yDW3fzFjGWosdeVjVasyPsF4YHj224', 'id':1}, {'account':'zU42yDW3fzFjGWosdeVjVasyPsF4YHj224',   'id':2}]");
-        msg.sender.deletex(tableName, "{'id':1}");
-        msg.sender.update(tableName, "{'account':'id==2'}", "{'id': 2}");
+	    msg.sender.create(tableName, "[{\\"field\\":\\"id\\", \\"type\\" : \\"int\\", \\"length\\" : 11, \\"PK\\" : 1, \\"NN\\" : 1, \\"UQ\\" : 1}, { \\"field\\":\\"account\\", \\"type\\" : \\"varchar\\" }, { \\"field\\":\\"age\\", \\"type\\" : \\"int\\" }]");
+        msg.sender.insert(tableName, "[{\\"account\\":\\"zU42yDW3fzFjGWosdeVjVasyPsF4YHj224\\", \\"id\\":1}, {\\"account\\":\\"zU42yDW3fzFjGWosdeVjVasyPsF4YHj224\\",   \\"id\\":2}]");
+        msg.sender.deletex(tableName, "{\\"id\\":1}");
+        msg.sender.update(tableName, "{\\"account\\":\\"id==2\\"}", "{\\"id\\": 2}");
         db.commit();
 	}
 
     /*
-	* @param owner table's owner'
+	* @param owner table's owner
 	* @param tableName eg: "test1"
 	* @param raw eg: ""
     */
@@ -345,7 +345,7 @@ contract DBTest {
         return xxx;
     }
         /*
-	* @param owner table's owner'
+	* @param owner table's owner
 	* @param tableName eg: "test1"
 	* @param raw eg: ""
 	* @param field eg: "id"
